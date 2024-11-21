@@ -11,6 +11,7 @@ export default bundleAnalyzer({
   serverRuntimeConfig: {
     maxFileSize: 30000000 // Tăng giới hạn kích thước lên 30MB (hoặc giá trị bạn muốn)
   },
+  crossOrigin: 'anonymous',
   // images: {
   //     domains: ['*'],
   //     path: '/public/*',
@@ -22,7 +23,7 @@ export default bundleAnalyzer({
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: 'https://cuulongconhan.com' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
           { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
           {
             key: 'Access-Control-Allow-Headers',
