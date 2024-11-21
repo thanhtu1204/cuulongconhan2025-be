@@ -16,6 +16,7 @@ export default bundleAnalyzer({
   //     domains: ['*'],
   //     path: '/public/*',
   // },
+
   async headers() {
     return [
       {
