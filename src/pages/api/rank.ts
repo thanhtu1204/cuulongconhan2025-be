@@ -13,20 +13,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!isAllowed) {
     return res
       .status(429)
-      .json({ status: 429, message: 'Yêu cầu quá nhanh, vui lòng thử lại sau.' });
+      .json({ status: 429, message: 'Request too fast, please try again later.' });
   }
 
   try {
-    const rankInfo = await Database.getRankInfo();
-    if (rankInfo.length === 0) {
+    const data = await Database.getRankInfo();
+    if (!data || data.length === 0) {
       return res.status(404).json({ error: 'No data found' });
     }
+
+    const sortedByInnerLevel = data
+      .slice()
+      .sort((a: any, b: any) => b.inner_level - a.inner_level)
+      .slice(0, 100);
+    const sortedByMoney = data
+      .slice()
+      .sort((a: any, b: any) => parseInt(b.money, 10) - parseInt(a.money, 10))
+      .slice(0, 100);
+    const sortedByHonor = data
+      .slice()
+      .sort((a: any, b: any) => b.honor - a.honor)
+      .slice(0, 100);
+    const sortedByGong = data
+      .slice()
+      .sort((a: any, b: any) => parseInt(b.gong, 10) - parseInt(a.gong, 10))
+      .slice(0, 100);
 
     const response: BaseResponse = {
       status: 200,
       success: true,
       message: 'Get data success',
-      data: rankInfo
+      data: {
+        sortedByInnerLevel,
+        sortedByMoney,
+        sortedByHonor,
+        sortedByGong
+      }
     };
 
     return res.status(200).json(response);

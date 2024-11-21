@@ -47,13 +47,9 @@ class Database {
     try {
       if (!this.pool || !this.pool.connected) {
         await this.connect();
-        const querry =
-          'SELECT TOP 100 * FROM dbo.VIEW_RANK_INFO ORDER BY inner_level DESC, level_rate DESC , levelup_time ASC';
-        const result = await this.pool!.request().query(querry);
-        return result.recordset;
       }
       const querry =
-        'SELECT TOP 100 * FROM dbo.VIEW_RANK_INFO ORDER BY inner_level DESC, level_rate DESC , levelup_time ASC';
+        'SELECT * FROM dbo.VIEW_RANK_INFO ORDER BY inner_level DESC, level_rate DESC , levelup_time ASC';
       const result = await this.pool!.request().query(querry);
       return result.recordset;
     } catch (error) {
