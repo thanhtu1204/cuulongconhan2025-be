@@ -1,0 +1,9 @@
+{
+  "regions": ["sin1"],
+  "crons": [
+    {
+      "path": "/api/auth/cron/ABCXCCXAAAA@123@22123CLCNCHECK",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

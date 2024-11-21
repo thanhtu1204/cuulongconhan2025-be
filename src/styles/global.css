@@ -1,0 +1,501 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+    min-width: 1280px;
+    margin: 0 auto; /* Canh giữa trang */
+}
+
+a {
+    @apply text-blue-700;
+}
+
+a:hover {
+    @apply border-b-2 border-blue-700;
+}
+
+
+.content p {
+    @apply my-6;
+}
+
+.content ul {
+    @apply my-6;
+}
+
+a:hover {
+    border-bottom-width: 0;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Header */
+.header {
+    background-color: #220d00;
+    height: 80px;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.button-register {
+    width: 230px;
+    height: 66px;
+    background-position: -13px -40px;
+
+    &:hover {
+        background-position: -13px -182px;
+    }
+}
+
+.button-download {
+    width: 308px;
+    height: 142px;
+    background-position: -244px -2px;
+
+    &:hover {
+        background-position: -244px -144px;
+    }
+}
+
+.button-add-card {
+    width: 230px;
+    height: 66px;
+    background-position: -553px -40px;
+
+    &:hover {
+        background-position: -553px -182px;
+    }
+}
+
+/* swiper.css */
+.mySwiper .swiper-pagination {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: auto !important;
+    left: auto !important;
+    transform: translateY(-50%);
+}
+
+.mySwiper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #220d00;
+    opacity: 0.7;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.mySwiper .swiper-pagination-bullet-active {
+    background-color: #ffa800;
+}
+
+/* Section Class */
+
+.class-cb {
+    width: 232px;
+    height: 75px;
+    background-position: 0px 0;
+
+    &:hover {
+        background-position: -235px 0;
+    }
+}
+
+.class-tl {
+    width: 232px;
+    height: 75px;
+    background-position: 0 -75px;
+
+    &:hover {
+        background-position: -235px -75px;
+    }
+}
+
+.class-vd {
+    width: 232px;
+    height: 75px;
+    background-position: 0 -150px;
+
+    &:hover {
+        background-position: -235px -150px;
+    }
+}
+
+.class-ll {
+    width: 232px;
+    height: 75px;
+    background-position: 0 -225px;
+
+    &:hover {
+        background-position: -235px -225px;
+    }
+}
+
+.class-bc {
+    width: 232px;
+    height: 75px;
+    background-position: 0 -300px;
+
+    &:hover {
+        background-position: -235px -300px;
+    }
+}
+
+.class-mg {
+    width: 232px;
+    height: 75px;
+    background-position: 0 -375px;
+
+    &:hover {
+        background-position: -235px -375px;
+    }
+}
+
+.btn-facebook {
+    width: 65px;
+    height: 64px;
+    background-position: 0 0;
+
+    &:hover {
+        background-position-y: -64px;
+    }
+}
+
+.btn-youtube {
+    width: 65px;
+    height: 64px;
+    background-position: -65px 0;
+
+    &:hover {
+        background-position-y: -64px;
+    }
+}
+
+.btn-support {
+    width: 65px;
+    height: 64px;
+    background-position: -195px 0;
+
+    &:hover {
+        background-position-y: -64px;
+    }
+}
+
+.loading-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    background: #220d00;
+}
+
+.button-auth-login {
+    background-size: 100% 200%;
+    background-position-y: 100%;
+    width: 200px;
+    height: 84px;
+    margin-right: 4%;
+
+    &:hover {
+        background-position-y: 0;
+    }
+}
+
+/* handbook */
+.bg-tt {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-tb {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -159px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-tn {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -316px;
+}
+
+/* handbook */
+.bg-tt {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-tb {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -159px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-tn {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -316px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-pb {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -239px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.bg-nv {
+    height: 80px;
+    width: 225px;
+    margin: 20px;
+    background-position-y: -476px;
+
+    &:hover {
+        background-position-x: -235px;
+    }
+}
+
+.list-content {
+    padding: 0px 15px 15px 15px;
+    font-weight: bold;
+    text-align: start;
+
+    &:hover {
+        color: #ffa800;
+    }
+}
+
+.container-l {
+    width: 275px;
+}
+
+.container-r {
+    background-color: rgba(255, 255, 255, .85);
+    margin-top: 36px;
+    margin-right: 1px;
+    width: 70%;
+    padding-left: 30px;
+    padding-right: 10px;
+    padding-bottom: 11px;
+}
+
+.body {
+    background-color: #ede3d9;
+}
+
+.contents-list {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Tạo style cho thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #FFA800;
+    border-radius: 5px;
+}
+
+/* Tạo style cho thumb khi hover */
+::-webkit-scrollbar-thumb:hover {
+    display: none;
+}
+
+/* Tạo style cho track */
+::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+}
+
+/* --------------CSS Web-Shop ---------------*/
+
+.custom-bg-red {
+    --color-red: #a50e05;
+    background-color: var(--color-red);
+}
+
+.custom-bg-dark {
+    --color-dark: #343a40;
+    background-color: var(--color-dark);
+}
+
+.custom-bg-brown {
+    --color-red: #a48c66;
+    background-color: var(--color-red);
+
+    &:hover {
+        color: white !important;
+        /*border: 1px solid #111; */
+        background-color: #585858
+    }
+}
+
+.custom-text-yellow {
+    --color-yellow: #ffc555;
+    color: var(--color-yellow);
+    font-family: sans-serif;
+}
+
+.custom-bg-yellow {
+    --color-yellow: #ffc555;
+    background-color: var(--color-yellow);
+}
+
+.modal-wrapper {
+    width: 500px;
+    height: 600px;
+}
+
+.modal {
+    background: white;
+    height: auto;
+    width: 100%;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 110%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-body {
+    padding-top: 10px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 25px;
+}
+
+.description-list {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.spinner {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    color: #ffa800;
+    background: linear-gradient(currentColor 0 0) center/100% 7px,
+    linear-gradient(currentColor 0 0) center/7px 100%,
+    radial-gradient(farthest-side, #0000 calc(100% - 10.6px), currentColor calc(100% - 8.8px)),
+    radial-gradient(circle 10.6px, currentColor 94%, #0000 0);
+    background-repeat: no-repeat;
+    animation: spinner-mu2ebf 1.4s infinite linear;
+    position: relative;
+}
+
+.spinner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    transform: rotate(45deg);
+}
+
+@keyframes spinner-mu2ebf {
+    to {
+        transform: rotate(.5turn);
+    }
+}
+
+.bg-blueGray-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(30, 41, 59, var(--tw-bg-opacity));
+}
+
+
+.ck-editor__editable_inline {
+    min-height: 500px;
+}
+
+.content-html {
+    max-width: 800px;
+    display: inline-block;
+    vertical-align: middle;
+
+    & img,
+    & svg,
+    & video,
+    & canvas,
+    & audio,
+    & iframe,
+    & embed,
+    & object {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}

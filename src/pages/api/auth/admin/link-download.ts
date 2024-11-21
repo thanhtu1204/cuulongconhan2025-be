@@ -1,0 +1,64 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+import { verifyAuthAdmin } from '@/libs/auth';
+import { createOrUpdateLinkDownload } from '@/libs/mongooDb';
+import type BaseResponse from '@/utils/BaseResponse';
+import { rateLimiterMiddleware } from '@/utils/utils';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ status: 405, error: 'Method Not Allowed' });
+  }
+  const clientIp = req.socket.remoteAddress;
+  const isAllowed = rateLimiterMiddleware(clientIp ?? '') || false;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  const verifiedToken = token && (await verifyAuthAdmin(token).catch(() => {}));
+  if (!isAllowed) {
+    return res
+      .status(429)
+      .json({ status: 429, message: 'Yêu cầu quá nhanh, vui lòng thử lại sau.' });
+  }
+
+  if (!verifiedToken) {
+    return res.status(401).json({
+      status: 401,
+      message: 'Phiên đăng nhập hết hạn hoặc không có quyền thao tác',
+      data: null
+    });
+  }
+
+  const { linkEn, linkVi } = req.body;
+  if (!linkEn || !linkVi) {
+    const response: BaseResponse = {
+      status: 500,
+      success: true,
+      message: 'Link không được để trống',
+      data: null
+    };
+    return res.status(500).json(response);
+  }
+  try {
+    const update = await createOrUpdateLinkDownload(linkEn, linkVi);
+    const response: BaseResponse = {
+      status: 200,
+      success: true,
+      message: 'Cấu hình thành công',
+      data: {
+        update
+      }
+    };
+    return res.status(200).json(response);
+  } catch (e) {
+    const response: BaseResponse = {
+      status: 500,
+      success: true,
+      message: e?.message,
+      data: {
+        success: false
+      }
+    };
+    return res.status(500).json(response);
+  }
+}
