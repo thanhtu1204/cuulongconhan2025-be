@@ -18,6 +18,7 @@ const NewsSchema = Yup.object().shape({
   itemCategory: Yup.string().required('Phân loại vật phẩm là bắt buộc'),
   itemCode: Yup.string().required('ID Code vật phẩm là bắt buộc'),
   name: Yup.string().required('Tên vật phẩm là bắt buộc'),
+  nameEn: Yup.string().required('Tên vật phẩm tiếng anh là bắt buộc'),
   image: Yup.mixed<File>()
     .required('Ảnh là bắt buộc')
     .test(
@@ -26,6 +27,7 @@ const NewsSchema = Yup.object().shape({
       (value: any) => !value || (value.size && value.size <= MAX_FILE_SIZE_MB * 1024 * 1024)
     ),
   description: Yup.string().required('Mô tả là bắt buộc'),
+  descriptionEn: Yup.string().required('Mô tả tiếng anh là bắt buộc'),
   price: Yup.string().required('giá vật phẩm là bắt buộc')
 });
 
@@ -33,8 +35,10 @@ interface FormData {
   itemCategory: string;
   itemCode: string;
   name: string;
+  nameEn: string;
   image: File | null;
   description: string;
+  descriptionEn: string;
   price: string;
   // @item_category as int,
   // @item_code as int,
@@ -58,8 +62,10 @@ function AddItem() {
     itemCategory: '0',
     itemCode: '',
     name: '',
+    nameEn: '',
     image: null as File | null,
     description: '',
+    descriptionEn: '',
     price: ''
   };
 
@@ -68,9 +74,11 @@ function AddItem() {
       itemCategory: values.itemCategory,
       itemCode: values.itemCode,
       name: values.name,
+      nameEn: values.nameEn,
       image: values.image,
       descriptions: values.description,
-      price: values.price
+      price: values.price,
+      descriptionEn: values.descriptionEn
     };
 
     const result: any = await dispatch(addItemAction(payload)).unwrap();
@@ -196,6 +204,27 @@ function AddItem() {
                   />
                   <ErrorMessage name="name" component="div" className="text-xl text-red-500" />
                 </motion.div>
+
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <div className="my-2 block">
+                    <span className=" text-xl font-bold text-yellow">Tên vật phẩm tiếng anh *</span>
+                  </div>
+                  <Field
+                    className="h-14 w-full rounded text-xl"
+                    type="text"
+                    id="nameEn"
+                    name="nameEn"
+                    placeholder="Nhập tên vật phẩm tiếng anh ..."
+                    required
+                    autoComplete="off"
+                  />
+                  <ErrorMessage name="nameEn" component="div" className="text-xl text-red-500" />
+                </motion.div>
+
                 <motion.div
                   initial={{ y: '100%' }}
                   animate={{ y: 0 }}
@@ -235,6 +264,35 @@ function AddItem() {
                     className="text-xl text-red-500"
                   />
                 </motion.div>
+
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.7 }}
+                  className="w-full"
+                >
+                  <div className="my-2 block">
+                    <span className="text-xl font-bold text-yellow">
+                      Mô tả vật phẩm tiếng anh *
+                    </span>
+                  </div>
+                  <Field
+                    className="h-24 w-full rounded text-xl"
+                    as="textarea"
+                    id="descriptionEn"
+                    name="descriptionEn"
+                    placeholder="Nhập mô tả vật phẩm tiếng anh ..."
+                    required
+                    autoComplete="off"
+                    maxLength="255"
+                  />
+                  <ErrorMessage
+                    name="descriptionEn"
+                    component="div"
+                    className="text-xl text-red-500"
+                  />
+                </motion.div>
+
                 <motion.div
                   initial={{ y: '100%' }}
                   animate={{ y: 0 }}

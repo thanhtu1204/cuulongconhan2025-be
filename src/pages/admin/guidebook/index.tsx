@@ -18,8 +18,34 @@ const GuideBookSchema = Yup.object().shape({
     .min(6, 'Tiêu đề có ít nhất 6 ký tự')
     .max(100, 'Tiêu đề không được vượt quá 100 ký tự')
     .required('Tiêu đề là bắt buộc'),
+  titleEn: Yup.string()
+    .min(2, 'Tiêu đề có ít nhất 6 ký tự')
+    .max(100, 'Tiêu đề không được vượt quá 100 ký tự')
+    .required('Tiêu đề là bắt buộc'),
   type: Yup.string().required('Loại bài viết là bắt buộc'),
   contentHtml: Yup.string().test(
+    'contentHtmlSize',
+    'Data size must be less than 15.5 MB',
+    function (value) {
+      if (!value) {
+        return true; // Không cần kiểm tra nếu giá trị không tồn tại
+      }
+
+      // Kiểm tra độ dài của chuỗi
+      const isValid = value.length <= MAX_STRING_LENGTH;
+
+      if (!isValid) {
+        // Thông báo lỗi kiểm tra tùy chỉnh
+        return this.createError({
+          path: 'contentHtml',
+          message: 'Kích thước bài viết không được quá 15.5 MB hãy reisze lại ảnh'
+        } as any); // Thêm chú thích kiểu
+      }
+
+      return true;
+    }
+  ),
+  contentHtmlEn: Yup.string().test(
     'contentHtmlSize',
     'Data size must be less than 15.5 MB',
     function (value) {
@@ -45,8 +71,10 @@ const GuideBookSchema = Yup.object().shape({
 
 interface FormData {
   title: string;
+  titleEn: string;
   type: string;
   contentHtml: string;
+  contentHtmlEn: string;
 }
 
 export default function AddGuideBook() {
@@ -56,15 +84,19 @@ export default function AddGuideBook() {
 
   const initialValues = {
     title: '',
+    titleEn: '',
     type: '0',
-    contentHtml: ''
+    contentHtml: '',
+    contentHtmlEn: ''
   };
 
   const handleSubmit = async (values: FormData, formikHelpers: FormikHelpers<FormData>) => {
     const payload = {
       title: values.title,
+      titleEn: values.titleEn,
       type: values.type,
-      contentHtml: values.contentHtml
+      contentHtml: values.contentHtml,
+      contentHtmlEn: values.contentHtmlEn
     };
 
     const result: any = await dispatch(addGuideBookAction(payload)).unwrap();
@@ -126,6 +158,28 @@ export default function AddGuideBook() {
                   />
                   <ErrorMessage name="title" component="div" className="text-xl text-red-500" />
                 </motion.div>
+
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.7 }}
+                  className="w-full"
+                >
+                  <div className="my-2 block">
+                    <span className="text-xl font-bold text-yellow">Tiêu đề tiếng anh</span>
+                  </div>
+                  <Field
+                    className="h-14 w-full rounded text-xl"
+                    type="text"
+                    id="titleEn"
+                    name="titleEn"
+                    placeholder="Nhập tiêu đề tiếng anh"
+                    required
+                    autoComplete="off"
+                  />
+                  <ErrorMessage name="titleEn" component="div" className="text-xl text-red-500" />
+                </motion.div>
+
                 <motion.div
                   initial={{ y: '100%' }}
                   animate={{ y: 0 }}
@@ -171,6 +225,26 @@ export default function AddGuideBook() {
 
                   <ErrorMessage
                     name="contentHtml"
+                    component="div"
+                    className="text-xl text-red-500"
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.7 }}
+                  className="w-full"
+                >
+                  <div className="my-2 block">
+                    <span className="text-xl font-bold text-yellow">
+                      Nội dung chi tiết bài viết tiếng anh
+                    </span>
+                  </div>
+                  <CKEditorField name="contentHtmlEn" label="Nội dung chi tiết" />
+
+                  <ErrorMessage
+                    name="contentHtmlEn"
                     component="div"
                     className="text-xl text-red-500"
                   />

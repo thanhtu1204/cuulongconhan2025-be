@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const clientIp = req.socket.remoteAddress;
-  const isAllowed = rateLimiterMiddlewareByCount(clientIp ?? '', 25) || false;
+  const isAllowed = rateLimiterMiddlewareByCount(clientIp ?? '', 50) || false;
   const authHeader = req.headers.authorization;
 
   const token = authHeader && authHeader.split(' ')[1];

@@ -51,14 +51,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { title = [''], contentHtml = [''], type = [''] } = fields;
+    const {
+      title = [''],
+      contentHtml = [''],
+      type = [''],
+      titleEn = [''],
+      contentHtmlEn = ['']
+    } = fields;
 
     const resCreate = await createGuidebookData(
       title[0] ?? '',
+      titleEn[0] ?? '',
       contentHtml[0] ?? '',
+      contentHtmlEn[0] ?? '',
       type[0] ?? ''
     );
-
     if (resCreate) {
       const response: BaseResponse = {
         status: 200,
