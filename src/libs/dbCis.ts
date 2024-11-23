@@ -178,6 +178,59 @@ class DatabaseCis {
     }
   }
 
+  public static async addItemV1(item: any) {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+
+      const {
+        item_category,
+        item_code,
+        item_price,
+        item_day,
+        item_quantity,
+        item_status,
+        item_name,
+        item_description,
+        item_image,
+        key_word,
+        is_present,
+        item_name_en,
+        item_description_en
+      } = item;
+
+      const query = `
+            INSERT INTO Tbl_Item_List 
+            (item_category, item_code, item_price, item_day, item_quantity, item_status, item_name, item_description, item_image, key_word, is_present, item_name_en,
+        item_description_en)
+            VALUES (@item_category, @item_code, @item_price, @item_day, @item_quantity, @item_status, @item_name, @item_description, @item_image, @key_word, @is_present, @item_name_en,
+        @item_description_en)
+        `;
+
+      const result = await this.pool!.request()
+        .input('item_category', TYPES.Int, item_category)
+        .input('item_code', TYPES.Int, item_code)
+        .input('item_price', TYPES.Int, item_price)
+        .input('item_day', TYPES.Int, item_day)
+        .input('item_quantity', TYPES.Int, item_quantity)
+        .input('item_status', TYPES.Int, item_status)
+        .input('item_name', TYPES.NVarChar(400), String(item_name))
+        .input('item_description', TYPES.NVarChar(400), String(item_description))
+        .input('item_image', TYPES.NVarChar(400), String(item_image))
+        .input('key_word', TYPES.Char(20), String(key_word))
+        .input('is_present', TYPES.Int, is_present)
+        .input('item_name_en', TYPES.NVarChar(400), String(item_name_en))
+        .input('item_description_en', TYPES.NVarChar(400), String(item_description_en))
+
+        .query(query); // Use .query() instead of .execute()
+
+      return result || null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
+    }
+  }
+
   public static async deleteItemById(id: string) {
     try {
       if (!this.pool || !this.pool.connected) {

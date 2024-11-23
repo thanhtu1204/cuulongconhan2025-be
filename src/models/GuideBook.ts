@@ -5,12 +5,16 @@ export interface Guidebook extends Document {
   title: string;
   htmlContent: string;
   type: string;
+  titleEn: string;
+  htmlContentEn: string;
 }
 
 const guidebookSchema = new Schema<Guidebook>({
   title: { type: String, required: true },
   htmlContent: { type: String, required: true },
-  type: { type: String, required: true }
+  type: { type: String, required: true },
+  titleEn: { type: String, required: false }, // New field
+  htmlContentEn: { type: String, required: false } // New field
 });
 
 guidebookSchema.set('toJSON', {

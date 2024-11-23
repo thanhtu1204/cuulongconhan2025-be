@@ -56,7 +56,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         itemCategory = [''],
         itemCode = [''],
         name = [''],
+        nameEn = [''],
         descriptions = [''],
+        descriptionEn = [''],
         price = ['']
       } = fields;
       // Check if an image file was uploaded
@@ -89,9 +91,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             item_description: descriptions[0] ?? '',
             item_image: linkImage ?? '',
             key_word: 'D',
-            is_present: 0
+            is_present: 0,
+            item_name_en: nameEn[0] ?? '',
+            item_description_en: descriptionEn[0] ?? ''
           };
-          const statusAddItem = await DbCis.addItem(item);
+          const statusAddItem = await DbCis.addItemV1(item);
 
           if (statusAddItem) {
             const response: BaseResponse = {

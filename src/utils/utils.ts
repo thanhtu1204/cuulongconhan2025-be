@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import iconv from 'iconv-lite';
 import { get, set } from 'lodash';
 
-const rateLimit = 25; // Number of allowed requests per minute
+const rateLimit = 50; // Number of allowed requests per minute
 
 const rateLimiter: Record<string, number[]> = {};
 const maxCacheSize = 100; // Số lượng timestamps tối đa cho mỗi địa chỉ IP

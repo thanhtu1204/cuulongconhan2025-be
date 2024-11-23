@@ -19,7 +19,9 @@ export async function connectToDatabaseOnce(): Promise<void> {
 // Hàm tạo dữ liệu từ GuidebookModel
 export async function createGuidebookData(
   title: string,
+  titleEn: string,
   htmlContent: string,
+  htmlContentEn: string,
   type: string
 ): Promise<Guidebook> {
   try {
@@ -27,8 +29,11 @@ export async function createGuidebookData(
     const guidebook = {
       title,
       htmlContent,
-      type
+      type,
+      titleEn,
+      htmlContentEn
     };
+
     const newGuidebook = await GuidebookModel.create(guidebook);
     return newGuidebook as Guidebook;
   } catch (error) {
