@@ -191,7 +191,7 @@ export default function AddNews() {
                     <span className="text-xl font-bold text-yellow">Ảnh title tiếng việt</span>
                   </div>
 
-                  <ImageUpload name="imageVi" />
+                  <ImageUpload name="imageVi" maxHeight={296} maxWidth={600} />
 
                   <ErrorMessage name="imageVi" component="div" className="text-xl text-red-500" />
                 </motion.div>
@@ -206,7 +206,7 @@ export default function AddNews() {
                     <span className="text-xl font-bold text-yellow">Ảnh title tiếng anh</span>
                   </div>
 
-                  <ImageUpload name="imageEn" />
+                  <ImageUpload name="imageEn" maxHeight={296} maxWidth={600} />
 
                   <ErrorMessage name="imageEn" component="div" className="text-xl text-red-500" />
                 </motion.div>
