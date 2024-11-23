@@ -64,10 +64,12 @@ export const getAllNews = async () => {
 export const getAllNewsByLanguage = async () => {
   try {
     await connectToDatabaseOnce();
-    const newsList = await NewsModel.find({ delete_flag: false }).lean();
+    const newsList = await NewsModel.find({ delete_flag: false })
+      .sort({ createdAt: -1 }) // Sort by createdAt in descending order (-1)
+      .lean();
     return newsList;
   } catch (error) {
-    throw new Error(`Error fetching news }: ${error.message}`);
+    throw new Error(`Error fetching news: ${error.message}`);
   }
 };
 
