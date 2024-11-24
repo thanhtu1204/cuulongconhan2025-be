@@ -48,6 +48,7 @@ export async function getAllGuideBook() {
     return guidebooks.map((guidebook) => ({
       id: guidebook._id.toString(),
       title: guidebook.title,
+      titleEn: guidebook.titleEn,
       type: guidebook.type
     }));
   } catch (error) {
