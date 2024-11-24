@@ -144,6 +144,20 @@ export const deleteItem = async (id: string) => {
   });
 };
 
+export const deleteItemBonus = async (id: string) => {
+  const state = store.getState();
+  const { accessToken } = state.admin;
+  const payload = {
+    id
+  };
+  return http.post<INewsList>(API_URL.DELETE_ITEM_BONUS, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+};
+
 export const showItem = async (id: string) => {
   const state = store.getState();
   const { accessToken } = state.admin;
@@ -171,6 +185,25 @@ export const adminCreateItem = async (item: any) => {
   });
 
   return http.post<AdminState>(API_URL.ADMIN_ADD_ITEM, item, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+};
+export const adminCreateBonusItem = async (item: any) => {
+  const state = store.getState();
+  const { accessToken } = state.admin;
+  const formData = new FormData();
+  Object.keys(item).forEach((key) => {
+    const value = item[key];
+    // Kiểm tra xem giá trị có phải là chuỗi hoặc Blob không và không phải là undefined
+    if (value !== undefined && (typeof value === 'string' || value instanceof Blob)) {
+      formData.append(key, value);
+    }
+  });
+
+  return http.post<AdminState>(API_URL.ADMIN_ADD_ITEM_BONUS, item, {
     headers: {
       'Content-Type': 'multipart/form-data',
       Authorization: `Bearer ${accessToken}`
@@ -283,6 +316,18 @@ export const addMoneyByUserName = async (payload: any) => {
   const { accessToken } = state.admin;
 
   return http.post<IAllPromotions>(API_URL.ADD_MONEY_BY_USER_NAME, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+};
+
+export const addBonusMoneyByUserName = async (payload: any) => {
+  const state = store.getState();
+  const { accessToken } = state.admin;
+
+  return http.post<IAllPromotions>(API_URL.ADD_BONUS_MONEY_BY_USER_NAME, payload, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`
@@ -436,6 +481,18 @@ export const cronInDashBoard = async () => {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ABCXCCXAAAA@123@22123CLCNCHECK`
+    }
+  });
+};
+
+export const getListItemBonusAll = async () => {
+  const state = store.getState();
+  const { accessToken } = state.admin;
+
+  return http.get<INewsList>(API_URL.LIST_ITEM_BONUS_FULL, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
     }
   });
 };

@@ -45,7 +45,11 @@ export const API_URL = {
   USER_GET_ITEM_EVENT_REWARDS: '/api/auth/user/event-expend',
   USER_GET_ITEM_REWARDS: '/api/auth/user/get-rewards',
   RENAME_CHARACTER: '/api/auth/user/rename-character',
-  CRON_DASHBOARD: '/api/auth/cron'
+  CRON_DASHBOARD: '/api/auth/cron',
+  ADD_BONUS_MONEY_BY_USER_NAME: '/api/auth/admin/add-bonus-money',
+  ADMIN_ADD_ITEM_BONUS: '/api/auth/admin/shop-bonus/add-item',
+  LIST_ITEM_BONUS_FULL: '/api/auth/admin/shop-bonus/list-item-bonus-full',
+  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item'
 };
 export const API_GLOBAL_LOADING_URL = {
   NEWS: '/api/news',
@@ -68,5 +72,9 @@ export const API_GLOBAL_LOADING_URL = {
   ADMIN_DELETE_ITEM_EVENT_REWARDS: '/api/auth/admin/event-config/delete-item-event-rewards',
   USER_GET_ITEM_EVENT_REWARDS: '/api/auth/user/event-expend',
   USER_GET_ITEM_REWARDS: '/api/auth/user/get-rewards',
-  RENAME_CHARACTER: '/api/auth/user/rename-character'
+  RENAME_CHARACTER: '/api/auth/user/rename-character',
+  ADD_BONUS_MONEY_BY_USER_NAME: '/api/auth/admin/add-bonus-money',
+  ADMIN_ADD_ITEM_BONUS: '/api/auth/admin/shop-bonus/add-item',
+  LIST_ITEM_BONUS_FULL: '/api/auth/admin/shop-bonus/list-item-bonus-full',
+  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item'
 };

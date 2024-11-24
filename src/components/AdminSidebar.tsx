@@ -132,6 +132,54 @@ export default function AdminSidebar() {
               <hr className="my-4 md:min-w-full" />
               {/* Heading */}
               <span className="mr-2 block pb-4 pt-1 text-xs font-bold uppercase text-cyan-400 no-underline md:min-w-full">
+                Long ngân các
+              </span>
+
+              <li className="items-center">
+                <Link href="/admin/shop-bonus/add-item">
+                  <span
+                    className={`block py-3 text-xs font-bold uppercase ${
+                      router.pathname.indexOf('/admin/shop-bonus/add-item') !== -1
+                        ? 'text-yellow hover:text-red-700'
+                        : 'text-white hover:text-yellow'
+                    }`}
+                  >
+                    <i
+                      className={` text-sm ${
+                        router.pathname.indexOf('/admin/shop-bonus/add-item') !== -1
+                          ? 'text-yellow hover:text-red-700'
+                          : 'text-white hover:text-yellow'
+                      }`}
+                    />
+                    Thêm vật phẩm mới
+                  </span>
+                </Link>
+              </li>
+
+              <li className="items-center">
+                <Link href="/admin/shop-bonus/manager-item">
+                  <span
+                    className={`block py-3 text-xs font-bold uppercase ${
+                      router.pathname.indexOf('/admin/shop-bonus/manager-item') !== -1
+                        ? 'text-yellow hover:text-red-700'
+                        : 'text-white hover:text-yellow'
+                    }`}
+                  >
+                    <i
+                      className={` text-sm ${
+                        router.pathname.indexOf('/admin/shop-bonus/manager-item') !== -1
+                          ? 'text-yellow hover:text-red-700'
+                          : 'text-white hover:text-yellow'
+                      }`}
+                    />
+                    Quản lý vật phẩm
+                  </span>
+                </Link>
+              </li>
+
+              <hr className="my-4 md:min-w-full" />
+              {/* Heading */}
+              <span className="mr-2 block pb-4 pt-1 text-xs font-bold uppercase text-cyan-400 no-underline md:min-w-full">
                 Gift code
               </span>
               <li className="items-center">
@@ -379,7 +427,30 @@ export default function AdminSidebar() {
                           : 'text-white hover:text-yellow'
                       }`}
                     />
-                    Nạp tiền cho user
+                    Nạp tiền vào tk chính cho user
+                  </span>
+                </Link>
+              </li>
+
+              <span className="mx-4" />
+
+              <li className="items-center">
+                <Link href="/admin/add-bonus-money">
+                  <span
+                    className={`block py-3 text-xs font-bold uppercase ${
+                      router.pathname.indexOf('/admin/add-bonus-money') !== -1
+                        ? 'text-yellow hover:text-red-700'
+                        : 'text-white hover:text-yellow'
+                    }`}
+                  >
+                    <i
+                      className={` text-sm ${
+                        router.pathname.indexOf('/admin/add-bonus-money') !== -1
+                          ? 'text-yellow hover:text-red-700'
+                          : 'text-white hover:text-yellow'
+                      }`}
+                    />
+                    Nạp tiền vào tk khuyễn mãi cho user
                   </span>
                 </Link>
               </li>

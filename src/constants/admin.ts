@@ -18,6 +18,7 @@ export const DEFAULT_ADMIN_STATE = {
   },
   listNewsFull: [],
   listProductFull: [],
+  listProductBonusFull: [],
   dashboard: {
     user_count: 0,
     trans: {
@@ -46,6 +47,7 @@ export type AdminState = {
   };
   listNewsFull: any[];
   listProductFull: IProduct[];
+  listProductBonusFull: any[];
   dashboard: IDashBoard;
   listGift: IGift[];
   listPromotion: any;

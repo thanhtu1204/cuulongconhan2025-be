@@ -253,6 +253,26 @@ class NineDragonsAccount {
     }
   }
 
+  public static async getUserByUserId(userid: number) {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+        const querry = 'SELECT * FROM dbo.[9d_users] WHERE user_id = @userid';
+        const result = await this.pool!.request()
+          .input('userid', TYPES.VarChar, userid)
+          .query(querry);
+        return result.recordset || null;
+      }
+      const querry = 'SELECT * FROM dbo.[9d_users] WHERE user_id = @userid';
+      const result = await this.pool!.request()
+        .input('userid', TYPES.VarChar, userid)
+        .query(querry);
+      return result.recordset || null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
+    }
+  }
+
   public static async checkUserExistByEmail(email: string) {
     try {
       const query = 'SELECT TOP 1 1 FROM dbo.[9d_users] WHERE email = @email';

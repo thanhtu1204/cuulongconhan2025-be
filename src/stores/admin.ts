@@ -4,9 +4,11 @@ import { get } from 'lodash';
 import { ADMIN_STORE, DEFAULT_ADMIN_STATE } from '@/constants/admin';
 import {
   activeGift,
+  addBonusMoneyByUserName,
   addConfigLinkGame,
   addConfigPromotion,
   addMoneyByUserName,
+  adminCreateBonusItem,
   adminCreateGiftCode,
   adminCreateGuidebook,
   adminCreateItem,
@@ -22,10 +24,12 @@ import {
   deleteGift,
   deleteGuideBook,
   deleteItem,
+  deleteItemBonus,
   deleteNews,
   getAllPromotion,
   getDashBoard,
   getListGiftCodeAll,
+  getListItemBonusAll,
   getListNewsAll,
   getListProductAll,
   hideItem,
@@ -65,6 +69,9 @@ const adminStore = createSlice({
       })
       .addCase(getListProductConfigAction.fulfilled, (state: any, action) => {
         state.listProductFull = action.payload || [];
+      })
+      .addCase(getListItemBonusConfigAction.fulfilled, (state: any, action) => {
+        state.listProductBonusFull = action.payload || [];
       })
       .addCase(getDashBoardAction.pending, (state: any, _action) => {
         state.loading = true;
@@ -182,6 +189,19 @@ export const getListProductConfigAction = createAsyncThunk(
     return newRes.data;
   }
 );
+
+export const getListItemBonusConfigAction = createAsyncThunk(
+  `${ADMIN_STORE}/list-item-bonus-all`,
+  async () => {
+    const newRes = await getListItemBonusAll();
+    const checkErrCode = get(newRes, 'status');
+    if (checkErrCode && checkErrCode !== 200) {
+      return newRes;
+    }
+    return newRes.data;
+  }
+);
+
 export const hideNewsAction = createAsyncThunk(`${ADMIN_STORE}/hide-news`, async (id: string) => {
   return hideNews(id);
 });
@@ -210,9 +230,22 @@ export const deleteItemAction = createAsyncThunk(
   }
 );
 
+export const deleteItemBonusAction = createAsyncThunk(
+  `${ADMIN_STORE}/delete-item-bonus`,
+  async (id: string) => {
+    return deleteItemBonus(id);
+  }
+);
+
 export const addItemAction = createAsyncThunk(`${ADMIN_STORE}/add-item`, async (payload: any) => {
   return adminCreateItem(payload);
 });
+export const addItemBonusAction = createAsyncThunk(
+  `${ADMIN_STORE}/add-item-bonus`,
+  async (payload: any) => {
+    return adminCreateBonusItem(payload);
+  }
+);
 
 export const getDashBoardAction = createAsyncThunk(`${ADMIN_STORE}/dashboard`, async () => {
   const newRes = await getDashBoard();
@@ -275,6 +308,13 @@ export const addMoneyAction = createAsyncThunk(
   `${ADMIN_STORE}/add-money-action`,
   async (payload: any) => {
     return addMoneyByUserName(payload);
+  }
+);
+
+export const addBonusMoneyAction = createAsyncThunk(
+  `${ADMIN_STORE}/add-bonus-money-action`,
+  async (payload: any) => {
+    return addBonusMoneyByUserName(payload);
   }
 );
 
