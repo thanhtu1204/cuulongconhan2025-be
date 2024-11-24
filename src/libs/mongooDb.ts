@@ -44,7 +44,7 @@ export async function createGuidebookData(
 export async function getAllGuideBook() {
   try {
     await connectToDatabaseOnce();
-    const guidebooks = await GuidebookModel.find({}, '_id title type').lean();
+    const guidebooks = await GuidebookModel.find({}, '_id title titleEn type').lean();
     return guidebooks.map((guidebook) => ({
       id: guidebook._id.toString(),
       title: guidebook.title,
