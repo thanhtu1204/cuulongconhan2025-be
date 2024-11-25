@@ -9,8 +9,9 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
     await connectToDatabaseOnce();
     // Tìm kiếm user trong MongoDB
     const existingUser: any = await BonusUserModel.findOne({
-      user_id: sqlUser?.user_id ?? ''
+      user_id: sqlUser.user_id
     }).lean();
+
     if (existingUser) {
       // User tồn tại, cập nhật balance
       existingUser.balance += additionalBalance;
