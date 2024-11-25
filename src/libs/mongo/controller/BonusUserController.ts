@@ -1,5 +1,6 @@
 // Hàm cập nhật hoặc thêm mới
 import BalanceHistoryModel from '@/libs/mongo/model/BalanceHistoryModel';
+import type { BonusUser } from '@/libs/mongo/model/BonusUserModel';
 import BonusUserModel from '@/libs/mongo/model/BonusUserModel';
 import { connectToDatabaseOnce } from '@/libs/mongooDb';
 
@@ -8,13 +9,25 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
     // Kết nối MongoDB
     await connectToDatabaseOnce();
     // Tìm kiếm user trong MongoDB
-    const existingUser: any = await BonusUserModel.findOne<any>({
+    const existingUser: BonusUser | null = await BonusUserModel.findOne({
       user_id: sqlUser?.user_id ?? ''
-    });
+    }).lean();
+
     if (existingUser) {
       // User tồn tại, cập nhật balance
-      existingUser.balance += additionalBalance;
-      await existingUser.save();
+      // existingUser.balance += additionalBalance;
+      // await existingUser.save();
+
+      const updatedUser = await BonusUserModel.findOneAndUpdate(
+        { user_id: sqlUser?.user_id ?? '' },
+        { $inc: { balance: Number(additionalBalance) } },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        throw new Error('Failed to update user balance');
+      }
+
       await BalanceHistoryModel.create({
         user_id: sqlUser.user_id,
         user_name: sqlUser.user_name,
