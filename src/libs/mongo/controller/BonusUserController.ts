@@ -1,4 +1,5 @@
 // Hàm cập nhật hoặc thêm mới
+import BalanceHistoryModel from '@/libs/mongo/model/BalanceHistoryModel';
 import BonusUserModel from '@/libs/mongo/model/BonusUserModel';
 import { connectToDatabaseOnce } from '@/libs/mongooDb';
 
@@ -12,6 +13,13 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
       // User tồn tại, cập nhật balance
       existingUser.balance += additionalBalance;
       await existingUser.save();
+      await BalanceHistoryModel.create({
+        user_id: sqlUser.user_id,
+        user_name: sqlUser.user_name,
+        amount: additionalBalance,
+        action: 'add',
+        note: 'Balance updated'
+      });
       return { success: true, message: 'Balance updated', user: existingUser };
     }
     // Thêm mới vào MongoDB
@@ -33,8 +41,15 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
       message: sqlUser.message || '',
       fullname: sqlUser.fullname || ''
     });
-
     await newUser.save();
+    await BalanceHistoryModel.create({
+      user_id: sqlUser.user_id,
+      user_name: sqlUser.user_name,
+
+      amount: additionalBalance,
+      action: 'add',
+      note: 'Initial balance added'
+    });
     return { success: true, message: 'User added to MongoDB', user: newUser };
   } catch (error) {
     return { success: false, message: 'Error occurred', error: error.message };

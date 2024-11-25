@@ -1,3 +1,6 @@
+import DbCis from '@/libs/dbCis';
+import { savePurchaseHistory } from '@/libs/mongo/controller/PurchaseHistoryController';
+import BonusUserModel from '@/libs/mongo/model/BonusUserModel';
 import type { ItemBonus } from '@/libs/mongo/model/ItemBonusModel';
 import ItemBonusModel from '@/libs/mongo/model/ItemBonusModel';
 import { connectToDatabaseOnce } from '@/libs/mongooDb';
@@ -95,5 +98,60 @@ export async function getAllBonusItemsSell() {
   } catch (error) {
     console.error('Error fetching bonus items with status 2:', error);
     return { success: false, message: 'Error fetching bonus items', error: error.message };
+  }
+}
+
+export async function purchaseItem(userName: string, itemId: string, quantity: number) {
+  try {
+    // Kết nối database nếu cần
+    await connectToDatabaseOnce();
+
+    const user: any = await BonusUserModel.findOne({ user_name: userName }).lean();
+    if (!user) {
+      return { success: false, message: 'User not found' };
+    }
+
+    const item = await ItemBonusModel.findById(itemId).lean();
+    if (!item) {
+      return { success: false, message: 'Item not found' };
+    }
+
+    const totalCost = item.item_price * quantity;
+
+    if (Number(user.balance) < Number(totalCost)) {
+      return { success: false, message: 'Insufficient balance' };
+    }
+
+    // Trừ tiền từ tài khoản
+    const newBalance = user.balance - totalCost;
+    await BonusUserModel.updateOne({ user_name: userName }, { $set: { balance: newBalance } });
+    // add vào đã
+    const itemAdd = {
+      user_id: user.user_name,
+      cart_itemCode: item.item_code,
+      game_server: 0,
+      item_price: item.item_price
+    };
+    await DbCis.executeBonusStoredProcedure(itemAdd);
+    const historyData = {
+      user_id: user.user_id,
+      user_name: userName,
+      item_id: item._id,
+      item_name: item.item_name,
+      item_price: item.item_price,
+      quantity,
+      total_price: item.item_price,
+      purchase_date: new Date(),
+      status: 'completed'
+    };
+    await savePurchaseHistory(historyData);
+    return {
+      success: true,
+      message: 'Purchase successful',
+      balance: newBalance
+    };
+  } catch (error) {
+    console.error('Error during purchase:', error);
+    return { success: false, message: 'Error during purchase', error: error.message };
   }
 }

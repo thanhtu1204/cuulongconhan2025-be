@@ -5,18 +5,18 @@ import { toast } from 'react-toastify';
 import ModalConfirm from '@/components/ModalConfirm';
 import MyLazyLoadedImage from '@/components/MyLazyLoadedImage';
 import Pagination from '@/components/Pagination';
-import ActionManagerItem from '@/pages/admin/shop/component/ActionManagerItem';
+import ActionManagerItem from '@/pages/admin/shop-bonus/component/ActionManagerItem';
 import itemDefault from '@/public/assets/images/webshop/item_2213227.gif';
 import { useAppDispatch, useAppSelector } from '@/stores';
-import { deleteItemAction, getListProductConfigAction } from '@/stores/admin';
+import { deleteItemBonusAction, getListItemBonusConfigAction } from '@/stores/admin';
 import { numberWithCommas } from '@/utils/utils';
 
 const ItemTable = () => {
   const dispatch = useAppDispatch();
 
-  const listProductFull = useAppSelector((state) => state.admin.listProductFull);
+  const listProductFull = useAppSelector((state) => state.admin.listProductBonusFull);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [idSelect, setIdSelect] = useState<number>(1);
+  const [idSelect, setIdSelect] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const itemsPerPage: number = 10;
@@ -27,7 +27,7 @@ const ItemTable = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const getData = useCallback(async () => {
-    return dispatch(getListProductConfigAction());
+    return dispatch(getListItemBonusConfigAction());
   }, [dispatch]);
 
   useEffect(() => {
@@ -58,8 +58,8 @@ const ItemTable = () => {
   //   }
   // }
 
-  async function onClickDelete(param: number | string) {
-    const result: any = await dispatch(deleteItemAction(param as string)).unwrap();
+  async function onClickDelete(param: string) {
+    const result: any = await dispatch(deleteItemBonusAction(param as string)).unwrap();
     if (result?.status === 200) {
       toast.success('Xoá tin thành công!');
       setTimeout(() => {
@@ -150,7 +150,7 @@ const ItemTable = () => {
                       // }}
                       // onClickDelete={() => onClickDelete(item?.id ?? '')}
                       onClickDelete={() => {
-                        setIdSelect(item?.seq ?? 0);
+                        setIdSelect(item?._id ?? 0);
                         setOpenModal(true);
                       }}
                       // onClickShow={() => {
@@ -178,7 +178,7 @@ const ItemTable = () => {
         isOpen={openModal}
         onConfirm={() => onConfirmDelete()}
         onClose={() => {
-          setIdSelect(0);
+          setIdSelect('');
           setOpenModal(false);
         }}
       />
