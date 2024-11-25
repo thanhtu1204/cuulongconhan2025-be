@@ -15,10 +15,12 @@ export async function savePurchaseHistory(data: Partial<PurchaseHistory>) {
   }
 }
 
-export async function getPurchaseHistoryByUserId(user_id: number) {
+export async function getPurchaseHistoryByUserName(userName: string) {
   try {
     await connectToDatabaseOnce();
-    const history = await PurchaseHistoryModel.find({ user_id }).sort({ purchase_date: -1 }).lean();
+    const history = await PurchaseHistoryModel.find({ user_name: userName })
+      .sort({ purchase_date: -1 })
+      .lean();
     return { success: true, history };
   } catch (error) {
     console.error('Error fetching purchase history:', error);

@@ -72,6 +72,33 @@ class DatabaseCis {
     }
   }
 
+  public static async executeBonusStoredProcedure(payload: IProcedure) {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+      const result = await this.pool!.request()
+        .input('user_id', TYPES.VarChar(60), String(payload.user_id))
+        .input('cart_itemCode', TYPES.Int, Number(payload.cart_itemCode))
+        .input('game_server', TYPES.TinyInt, 0)
+        .input('item_price', TYPES.Int, payload.item_price)
+        .output('order_idx', TYPES.Int)
+        .output('v_error', TYPES.TinyInt)
+        .execute('Sp_Purchase_Using');
+      if (result && result?.output) {
+        if (result.output.o_v_error === 0) {
+          return {
+            order_idx: result.output.o_order_idx,
+            v_error: result.output.o_v_error
+          };
+        }
+      }
+      return null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
+    }
+  }
+
   public static async getHistoryByUserName(payload: any) {
     try {
       if (!this.pool || !this.pool.connected) {

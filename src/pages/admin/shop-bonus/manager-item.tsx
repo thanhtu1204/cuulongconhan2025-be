@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import React from 'react';
 
 import AdminLayout from '@/layouts/AdminLayout';
-import ItemTable from '@/pages/admin/shop/component/ItemTable';
+import ItemTable from '@/pages/admin/shop-bonus/component/ItemTable';
 
 export default function ManagerItem() {
   return (

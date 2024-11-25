@@ -31,8 +31,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
+  const isValidBalance = (value: any) => {
+    const regex = /^\d+(\.\d+)?$/;
+    return regex.test(value);
+  };
+
   const { userName, balance } = req.body;
-  if (!userName || !balance) {
+  if (!userName || !balance || !isValidBalance(balance)) {
     const response: BaseResponse = {
       status: 500,
       success: true,
@@ -43,12 +48,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   try {
     const resUser: any = await DatabaseDragonsAccount.getUserByUsername(userName);
-    console.log('resUser', resUser);
     if (!_.isEmpty(resUser)) {
       const firstUser = _.get(resUser, '[0]', null);
 
       if (firstUser) {
-        const statusAdd = await syncAndUpdateBalance(firstUser, balance);
+        const statusAdd = await syncAndUpdateBalance(firstUser, Number(balance));
         if (!_.isEmpty(res)) {
           const response: BaseResponse = {
             status: 200,
