@@ -8,10 +8,9 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
     // Kết nối MongoDB
     await connectToDatabaseOnce();
     // Tìm kiếm user trong MongoDB
-    const existingUser: any = (await BonusUserModel.findOne({
-      user_id: sqlUser.user_id
-    }).lean()) as any;
-
+    const existingUser: any = await BonusUserModel.findOne<any>({
+      user_id: sqlUser?.user_id ?? ''
+    });
     if (existingUser) {
       // User tồn tại, cập nhật balance
       existingUser.balance += additionalBalance;
@@ -62,7 +61,7 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
 export async function findBonusUserByUserName(userName: string) {
   try {
     await connectToDatabaseOnce();
-    const user = await BonusUserModel.findOne({ user_name: userName }).lean();
+    const user = await BonusUserModel.findOne<any>({ user_name: userName }).lean();
     if (!user) {
       return { success: false, message: 'User not found' };
     }
@@ -76,7 +75,7 @@ export async function findBonusUserByUserName(userName: string) {
 export async function findBonusUserByName(userName: string) {
   try {
     await connectToDatabaseOnce();
-    const user = await BonusUserModel.findOne({ user_name: userName }).lean();
+    const user = await BonusUserModel.findOne<any>({ user_name: userName }).lean();
     if (!user) {
       return { success: false, message: 'User not found' };
     }
