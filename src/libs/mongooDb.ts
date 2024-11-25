@@ -111,7 +111,8 @@ export async function createOrUpdateLinkDownload(linkEn: string, linkVi: string)
 export async function getLinkDownload() {
   try {
     await connectToDatabaseOnce();
-    return await ConfigLinkDownloadModel.findOne();
+    const getConfig = await ConfigLinkDownloadModel.findOne();
+    return getConfig;
   } catch (error) {
     throw error;
   }
