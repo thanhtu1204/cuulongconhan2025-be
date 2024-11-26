@@ -28,6 +28,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import NineDragonsAccount from '@/libs/dbNineDragonsAccount';
+import { Env } from '@/libs/Env.mjs';
 import type BaseResponse from '@/utils/BaseResponse';
 import { rateLimiterMiddleware } from '@/utils/utils';
 
@@ -43,7 +44,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .json({ status: 429, message: 'Yêu cầu quá nhanh, vui lòng thử lại sau.' });
   }
 
-  const { username, password, telephone, email, address, fullname } = req.body;
+  const { username, password, telephone, email, address, fullname, token } = req.body;
+
+  const secretKey = Env.RECAPTCHA_SECRET_KEY ?? '';
+  const responseGoogle = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `secret=${secretKey}&response=${token}`
+  });
+
+  const data = await responseGoogle.json();
+
+  if (!data || !data?.success) {
+    const response = {
+      status: 500,
+      success: false,
+      message: 'Xác nhận Captcha lỗi, vui lòng tải lại trang và thử lại!',
+      data: null
+    };
+    return res.status(500).json(response);
+  }
 
   if (username.length < 6 || username.length > 50) {
     const response = {

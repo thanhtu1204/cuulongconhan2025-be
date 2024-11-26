@@ -21,7 +21,10 @@ export const Env = createEnv({
     ADMIN_PASSWORD: z.string().nonempty(),
     S3_ENDPOINT_URL: z.string().nonempty(),
     S3_ACCESS_KEY: z.string().nonempty(),
-    S3_SECRET_KEY: z.string().nonempty()
+    S3_SECRET_KEY: z.string().nonempty(),
+    RECAPTCHA_SECRET_KEY: z.string().nonempty(),
+    TELEGRAM_BOT_TOKEN: z.string().nonempty(),
+    TELEGRAM_CHANNEL_ID: z.string().nonempty()
   },
   client: {},
   runtimeEnv: {
@@ -41,6 +44,9 @@ export const Env = createEnv({
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
     S3_ENDPOINT_URL: process.env.S3_ENDPOINT_URL,
     S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
-    S3_SECRET_KEY: process.env.S3_SECRET_KEY
+    S3_SECRET_KEY: process.env.S3_SECRET_KEY,
+    RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHANNEL_ID: process.env.TELEGRAM_CHANNEL_ID
   }
 });
