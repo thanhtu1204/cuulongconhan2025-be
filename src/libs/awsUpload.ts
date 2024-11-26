@@ -48,7 +48,7 @@ export const uploadImageToS3 = async (
           Key: objectName,
           Body: fileContent,
           ACL: 'public-read',
-          ContentType: options?.contentType || 'image/jpeg'
+          ContentType: options?.contentType || 'image/png'
         };
 
         s3.putObject(params, (err: AWSError) => {
