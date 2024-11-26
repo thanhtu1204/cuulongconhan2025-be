@@ -2,10 +2,11 @@ import _ from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { verifyAuthAdmin } from '@/libs/auth';
+import { sendTelegramNotification } from '@/libs/customNoti';
 import DatabaseDragonsAccount from '@/libs/dbNineDragonsAccount';
 import { syncAndUpdateBalance } from '@/libs/mongo/controller/BonusUserController';
 import type BaseResponse from '@/utils/BaseResponse';
-import { rateLimiterMiddleware } from '@/utils/utils';
+import { numberWithDot, rateLimiterMiddleware } from '@/utils/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -36,8 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return regex.test(value);
   };
 
-  const { userName, balance } = req.body;
-  if (!userName || !balance || !isValidBalance(balance)) {
+  const { userName, balance, description } = req.body;
+  if (!userName || !balance || !isValidBalance(balance) || !description) {
     const response: BaseResponse = {
       status: 500,
       success: true,
@@ -54,6 +55,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (firstUser) {
         const statusAdd = await syncAndUpdateBalance(firstUser, Number(balance));
         if (!_.isEmpty(res)) {
+          const message = `
+🚫Nạp tiền vào tkkm 🚫
+Nạp tiền thành công cho tài khoản: ${userName}
+Số tiền: ${numberWithDot(Number(balance) ?? 0)} VND
+Nội dung: ${description}
+`;
+          await sendTelegramNotification(message);
           const response: BaseResponse = {
             status: 200,
             success: true,

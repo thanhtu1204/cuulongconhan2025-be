@@ -11,12 +11,14 @@ import { addMoneyAction } from '@/stores/admin';
 import { amountToWord } from '@/utils/utils';
 
 const AddFundSchema = Yup.object().shape({
-  userName: Yup.string().required('userName không được để trống')
+  userName: Yup.string().required('userName không được để trống'),
+  description: Yup.string().required('Nội dung nạp tiền không được để trống')
 });
 
 interface FormData {
   userName: string;
   balance: string;
+  description: string;
 }
 
 export default function AddNews() {
@@ -38,7 +40,8 @@ export default function AddNews() {
 
   const initialAddFundValues = {
     userName: '',
-    balance: ''
+    balance: '',
+    description: ''
   };
 
   return (
@@ -85,6 +88,20 @@ export default function AddNews() {
                     autoComplete="off"
                   />
                   <ErrorMessage name="userName" component="div" className="text-xl text-red-500" />
+
+                  <div className="my-2 block">
+                    <span className="text-xl font-bold text-yellow">Nhập nội dung nạp tiền</span>
+                  </div>
+                  <Field
+                    className="h-14 w-full rounded text-xl"
+                    type="text"
+                    id="description"
+                    name="description"
+                    placeholder="Nhập nội dung"
+                    required
+                    autoComplete="off"
+                  />
+                  <ErrorMessage name="balance" component="div" className="text-xl text-red-500" />
                   <div className="my-2 block">
                     <span className="text-xl font-bold text-yellow">Nhập số tiền cần nạp</span>
                   </div>

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { verifyAuthAdmin } from '@/libs/auth';
-import { connectAndExecute, createAndUpdatePromotionConfig } from '@/libs/NineDragonsAccount';
+import { connectAndExecute, createAndUpdatePromotionConfigV1 } from '@/libs/NineDragonsAccount';
 import type BaseResponse from '@/utils/BaseResponse';
 import { rateLimiterMiddleware } from '@/utils/utils';
 
@@ -81,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     let update;
     await connectAndExecute(async (pool) => {
-      update = await createAndUpdatePromotionConfig(pool, req.body);
+      update = await createAndUpdatePromotionConfigV1(pool, req.body);
     });
 
     const response: BaseResponse = {

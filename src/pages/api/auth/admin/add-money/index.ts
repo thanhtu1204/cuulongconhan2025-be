@@ -2,9 +2,10 @@ import _ from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { verifyAuthAdmin } from '@/libs/auth';
+import { sendTelegramNotification } from '@/libs/customNoti';
 import DatabaseDragonsAccount from '@/libs/dbNineDragonsAccount';
 import type BaseResponse from '@/utils/BaseResponse';
-import { rateLimiterMiddleware } from '@/utils/utils';
+import { numberWithDot, rateLimiterMiddleware } from '@/utils/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -30,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  const { userName, balance } = req.body;
-  if (!userName || !balance) {
+  const { userName, balance, description } = req.body;
+  if (!userName || !balance || !description) {
     const response: BaseResponse = {
       status: 500,
       success: true,
@@ -46,6 +47,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!_.isEmpty(resUser)) {
       const statusAdd = await DatabaseDragonsAccount.addBalance(userName, balance);
       if (!_.isEmpty(res)) {
+        const message = `
+🚫Nạp tiền vào tk chính 🚫
+Nạp tiền thành công cho tài khoản: ${userName}
+Số tiền: ${numberWithDot(Number(balance) ?? 0)} VND
+Nội dung: ${description}
+`;
+        await sendTelegramNotification(message);
         const response: BaseResponse = {
           status: 200,
           success: true,
