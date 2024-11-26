@@ -1,5 +1,5 @@
 {
-  "regions": ["sin1"],
+  "regions": ["hkg1"],
   "crons": [
     {
       "path": "/api/auth/cron/ABCXCCXAAAA@123@22123CLCNCHECK",
