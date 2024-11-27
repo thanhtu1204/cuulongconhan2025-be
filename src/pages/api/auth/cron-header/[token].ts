@@ -16,17 +16,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const clientIp = req.socket.remoteAddress;
   const isAllowed = rateLimiterMiddleware(clientIp ?? '') || false;
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
+  const { token } = req.query;
+
   const verifiedToken = token === 'ABCXCCXAAAA@123@22123CLCNCHECK2025';
+
+  if (!verifiedToken) {
+    return res.status(401).json({ status: 401, message: 'Phiên không hợp lệ', data: null });
+  }
 
   if (!isAllowed) {
     return res
       .status(429)
       .json({ status: 429, message: 'Yêu cầu quá nhanh, vui lòng thử lại sau.' });
-  }
-  if (!verifiedToken) {
-    return res.status(401).json({ status: 401, message: 'Phiên không hợp lệ', data: null });
   }
 
   try {
