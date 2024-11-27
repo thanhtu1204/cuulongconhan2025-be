@@ -1,7 +1,8 @@
+import moment from 'moment';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { verifyAuthAdmin } from '@/libs/auth';
-import { connectAndExecute, createAndUpdatePromotionConfigV1 } from '@/libs/NineDragonsAccount';
+import NineDragonsAccount from '@/libs/dbNineDragonsAccount';
 import type BaseResponse from '@/utils/BaseResponse';
 import { rateLimiterMiddleware } from '@/utils/utils';
 
@@ -68,31 +69,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Kiểm tra logic hợp lệ giữa các trường (ví dụ: startDate không lớn hơn endDate)
-  if (new Date(startDate) > new Date(endDate)) {
+  if (moment(startDate).isAfter(moment(endDate))) {
     const response: BaseResponse = {
-      status: 500,
-      success: true,
+      status: 400, // Bad Request
+      success: false, // Lỗi nên đặt `success` là false
       message: 'Ngày bắt đầu không được lớn hơn ngày kết thúc',
       data: null
     };
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   }
-
   try {
-    let update;
-    await connectAndExecute(async (pool) => {
-      update = await createAndUpdatePromotionConfigV1(pool, req.body);
-    });
-
+    const update = await NineDragonsAccount.createAndUpdatePromotionConfigV1(req.body);
+    if (update) {
+      const response: BaseResponse = {
+        status: 200,
+        success: true,
+        message: 'Cấu hình thành công',
+        data: {
+          data: update
+        }
+      };
+      return res.status(200).json(response);
+    }
     const response: BaseResponse = {
-      status: 200,
+      status: 500,
       success: true,
-      message: 'Cấu hình thành công',
+      message: 'Cấu hình thất bại',
       data: {
         data: update
       }
     };
-    return res.status(200).json(response);
+    return res.status(500).json(response);
   } catch (e) {
     const response: BaseResponse = {
       status: 500,

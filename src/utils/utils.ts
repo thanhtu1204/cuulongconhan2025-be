@@ -163,17 +163,28 @@ export function isExpiredDate(expirationDate: string): boolean {
   return currentDateTime > expirationDateTime;
 }
 
-export function calculateDiscount(promotion: any) {
-  const currentDate = new Date();
-  const startDate = new Date(promotion?.start_date);
-  const endDate = new Date(promotion?.end_date);
+// cũ
+// export function calculateDiscount(promotion: any) {
+//   const currentDate = new Date();
+//   const startDate = new Date(promotion?.start_date);
+//   const endDate = new Date(promotion?.end_date);
+//
+//   // Kiểm tra xem khuyến mãi có đang hoạt động không
+//   if (promotion?.is_active && currentDate >= startDate && currentDate <= endDate) {
+//     // Nếu đang trong thời gian khuyến mãi, tính tỉ lệ khuyến mãi
+//     return promotion;
+//   }
+//   // Nếu không đang trong thời gian khuyến mãi, hoặc khuyến mãi không hoạt động, trả về null
+//   return null;
+// }
 
-  // Kiểm tra xem khuyến mãi có đang hoạt động không
-  if (promotion?.is_active && currentDate >= startDate && currentDate <= endDate) {
-    // Nếu đang trong thời gian khuyến mãi, tính tỉ lệ khuyến mãi
+// new
+
+export function calculateDiscount(promotion: any) {
+  if (promotion?.is_active) {
     return promotion;
   }
-  // Nếu không đang trong thời gian khuyến mãi, hoặc khuyến mãi không hoạt động, trả về null
+
   return null;
 }
 

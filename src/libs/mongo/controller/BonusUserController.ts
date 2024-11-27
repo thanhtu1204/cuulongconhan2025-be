@@ -60,7 +60,6 @@ export async function syncAndUpdateBalance(sqlUser: any, additionalBalance: numb
     await BalanceHistoryModel.create({
       user_id: sqlUser.user_id,
       user_name: sqlUser.user_name,
-
       amount: additionalBalance,
       action: 'add',
       note: 'Initial balance added'

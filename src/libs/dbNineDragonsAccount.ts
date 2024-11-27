@@ -7,10 +7,11 @@ import { nanoid } from 'nanoid';
 import { getJwtSecretKey } from '@/libs/auth';
 import { Env } from '@/libs/Env.mjs';
 import type { UserModel } from '@/models/UserModel';
+import type { PromotionConfig } from '@/types/adminTypes';
 import type { ITransaction } from '@/types/product';
 import type { ITransactionDb, ITransactionMbbank } from '@/types/transaction';
 import type { IAllUser, IUser } from '@/types/user';
-import { comparePasswords, hashPasswords } from '@/utils/utils';
+import { calculateDiscount, comparePasswords, hashPasswords } from '@/utils/utils';
 
 const dbConfig = {
   user: Env.DATABASE_USERNAME || '',
@@ -483,12 +484,12 @@ class NineDragonsAccount {
     try {
       if (!this.pool || !this.pool.connected) {
         await this.connect();
-        const querry = 'SELECT user_id, user_name FROM dbo.[9d_users]';
+        const querry = 'SELECT * FROM dbo.[9d_users]';
         const result = await this.pool!.request().query(querry);
         const allUsers: IAllUser[] = result.recordset;
         return allUsers || [];
       }
-      const querry = 'SELECT user_id, user_name FROM dbo.[9d_users]';
+      const querry = 'SELECT * FROM dbo.[9d_users]';
       const result = await this.pool!.request().query(querry);
       const allUsers: IAllUser[] = result.recordset;
       return allUsers || [];
@@ -908,6 +909,116 @@ class NineDragonsAccount {
       return null;
     } catch (error) {
       throw new Error('có lỗi kết nối dữ liệu, vui lòng thử lại sau!');
+    }
+  }
+
+  public static async createAndUpdatePromotionConfigV1(config: PromotionConfig) {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+      const query = `
+        DECLARE @TableExists BIT = 0, @HasRecords BIT = 0;
+
+        -- Kiểm tra bảng tồn tại
+        IF OBJECT_ID('dbo.promotion_config', 'U') IS NOT NULL
+        BEGIN
+            SET @TableExists = 1;
+        END
+
+        -- Nếu bảng chưa tồn tại, tạo bảng và thêm bản ghi mới
+        IF @TableExists = 0
+        BEGIN
+            CREATE TABLE dbo.promotion_config (
+                id INT PRIMARY KEY IDENTITY(1,1),
+                min_amount INT NOT NULL,
+                max_amount INT NOT NULL,
+                discount_percentage INT NOT NULL,
+                start_date BIGINT NOT NULL, 
+                end_date BIGINT NOT NULL,
+                is_active BIT NOT NULL,
+                create_at DATETIME2 DEFAULT GETDATE(),
+                update_at DATETIME2 DEFAULT GETDATE()
+            );
+            INSERT INTO dbo.promotion_config (min_amount, max_amount, discount_percentage, start_date, end_date, is_active)
+            VALUES (@minAmount, @maxAmount, @discountPercentage, @startDate, @endDate, @isActive);
+        END
+        ELSE
+        BEGIN
+            -- Kiểm tra xem bảng có bản ghi nào không
+            SELECT TOP 1 @HasRecords = 1 FROM dbo.promotion_config;
+
+            -- Nếu có bản ghi, thực hiện UPDATE
+            IF @HasRecords = 1
+            BEGIN
+                UPDATE dbo.promotion_config
+                SET
+                    min_amount = @minAmount,
+                    max_amount = @maxAmount,
+                    discount_percentage = @discountPercentage,
+                    start_date = @startDate,
+                    end_date = @endDate,
+                    is_active = @isActive,
+                    update_at = GETDATE();
+            END
+            ELSE
+            BEGIN
+                -- Nếu không có bản ghi, thực hiện INSERT
+                INSERT INTO dbo.promotion_config (min_amount, max_amount, discount_percentage, start_date, end_date, is_active)
+                VALUES (@minAmount, @maxAmount, @discountPercentage, @startDate, @endDate, @isActive);
+            END
+        END`;
+
+      const result: any = await this.pool!.request()
+        .input('minAmount', TYPES.Decimal, config.minAmount)
+        .input('maxAmount', TYPES.Decimal, config.maxAmount)
+        .input('discountPercentage', TYPES.Decimal, config.discountPercentage)
+        .input('startDate', TYPES.BigInt, config.startDate)
+        .input('endDate', TYPES.BigInt, config.endDate)
+        .input('isActive', TYPES.Bit, 1)
+        .query(query);
+
+      if (result && result?.rowsAffected) {
+        return result?.rowsAffected[0] > 0;
+      }
+      return null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
+    }
+  }
+
+  public static async getFirstPromotionConfig(): Promise<any> {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+      const query = `
+    DECLARE @CurrentTimestamp BIGINT = DATEDIFF_BIG(MILLISECOND, '1970-01-01', GETUTCDATE());
+    IF OBJECT_ID('dbo.promotion_config', 'U') IS NOT NULL
+    BEGIN
+    SELECT TOP 1 *
+    FROM dbo.promotion_config
+    WHERE 
+        (@CurrentTimestamp >= start_date) AND
+        (@CurrentTimestamp <= end_date) AND
+        (is_active = 1)
+    ORDER BY create_at DESC;
+    END
+    ELSE
+    BEGIN
+    SELECT NULL AS id;
+    END;`;
+      const result: any = await this.pool!.query(query);
+      if (result && result?.recordset?.length > 0) {
+        const recordset = result.recordset[0];
+        console.log('recordset', recordset);
+
+        // Tính toán và trả về giá trị dựa trên bản ghi tìm được
+        return calculateDiscount(recordset);
+      }
+      return null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
     }
   }
 }

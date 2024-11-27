@@ -2,7 +2,7 @@
   "regions": ["hkg1"],
   "crons": [
     {
-      "path": "/api/auth/cron/ABCXCCXAAAA@123@22123CLCNCHECK",
+      "path": "/api/auth/cron/ABCXCCXAAAA@123@22123CLCNCHECK2025",
       "schedule": "0 0 * * *"
     }
   ]

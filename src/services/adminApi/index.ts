@@ -480,7 +480,7 @@ export const cronInDashBoard = async () => {
   return http.get<IDashBoard>(API_URL.CRON_DASHBOARD, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ABCXCCXAAAA@123@22123CLCNCHECK`
+      Authorization: `Bearer ABCXCCXAAAA@123@22123CLCNCHECK2025`
     }
   });
 };
