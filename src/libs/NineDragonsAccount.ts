@@ -10,7 +10,6 @@ import type {
   PromotionConfig
 } from '@/types/adminTypes';
 import type { NewsData } from '@/types/newsTypes';
-import { calculateDiscount } from '@/utils/utils';
 
 interface PoolConfig {
   user: string;
@@ -628,79 +627,6 @@ export async function createAndUpdatePromotionConfig(
   }
 }
 
-export async function createAndUpdatePromotionConfigV1(
-  pool: ConnectionPool,
-  config: PromotionConfig
-) {
-  try {
-    const query = `
-        DECLARE @TableExists BIT = 0, @HasRecords BIT = 0;
-
-        -- Kiểm tra bảng tồn tại
-        IF OBJECT_ID('dbo.promotion_config', 'U') IS NOT NULL
-        BEGIN
-            SET @TableExists = 1;
-        END
-
-        -- Nếu bảng chưa tồn tại, tạo bảng và thêm bản ghi mới
-        IF @TableExists = 0
-        BEGIN
-            CREATE TABLE dbo.promotion_config (
-                id INT PRIMARY KEY IDENTITY(1,1),
-                min_amount INT NOT NULL,
-                max_amount INT NOT NULL,
-                discount_percentage INT NOT NULL,
-                start_date DATE NOT NULL,
-                end_date DATE NOT NULL,
-                is_active BIT NOT NULL,
-                create_at DATETIME2 DEFAULT GETDATE(),
-                update_at DATETIME2 DEFAULT GETDATE()
-            );
-            INSERT INTO dbo.promotion_config (min_amount, max_amount, discount_percentage, start_date, end_date, is_active)
-            VALUES (@minAmount, @maxAmount, @discountPercentage, @startDate, @endDate, @isActive);
-        END
-        ELSE
-        BEGIN
-            -- Kiểm tra xem bảng có bản ghi nào không
-            SELECT TOP 1 @HasRecords = 1 FROM dbo.promotion_config;
-
-            -- Nếu có bản ghi, thực hiện UPDATE
-            IF @HasRecords = 1
-            BEGIN
-                UPDATE dbo.promotion_config
-                SET
-                    min_amount = @minAmount,
-                    max_amount = @maxAmount,
-                    discount_percentage = @discountPercentage,
-                    start_date = @startDate,
-                    end_date = @endDate,
-                    is_active = @isActive,
-                    update_at = GETDATE();
-            END
-            ELSE
-            BEGIN
-                -- Nếu không có bản ghi, thực hiện INSERT
-                INSERT INTO dbo.promotion_config (min_amount, max_amount, discount_percentage, start_date, end_date, is_active)
-                VALUES (@minAmount, @maxAmount, @discountPercentage, @startDate, @endDate, @isActive);
-            END
-        END`;
-
-    const result = await pool
-      .request()
-      .input('minAmount', TYPES.Decimal, config.minAmount)
-      .input('maxAmount', TYPES.Decimal, config.maxAmount)
-      .input('discountPercentage', TYPES.Decimal, config.discountPercentage)
-      .input('startDate', TYPES.Date, config.startDate)
-      .input('endDate', TYPES.Date, config.endDate)
-      .input('isActive', TYPES.Bit, 1)
-      .query(query);
-
-    return result?.recordset || null;
-  } catch (error) {
-    throw new Error('An internal server error occurred');
-  }
-}
-
 export async function createAndUpdateGuideWeb(pool: ConnectionPool, guide: IGuideWeb) {
   try {
     const checkTableQuery = `
@@ -755,36 +681,6 @@ export async function createAndUpdateGuideWeb(pool: ConnectionPool, guide: IGuid
       .query(updateTableQuery);
 
     return updateTableResult?.recordset || null;
-  } catch (error) {
-    throw new Error('An internal server error occurred');
-  }
-}
-
-export async function getFirstPromotionConfig(pool: ConnectionPool): Promise<any> {
-  try {
-    const query = `
-      IF OBJECT_ID('dbo.promotion_config', 'U') IS NOT NULL
-      BEGIN
-      SELECT TOP 1 * FROM dbo.promotion_config 
-      WHERE 
-      (OBJECT_ID('dbo.promotion_config', 'U') IS NOT NULL) AND
-      (CONVERT(DATE, GETDATE()) >= CONVERT(DATE, start_date)) AND
-      (CONVERT(DATE, GETDATE()) <= CONVERT(DATE, end_date)) AND
-      (is_active = 1)
-      ORDER BY create_at DESC;
-      END
-      ELSE
-      BEGIN
-        SELECT NULL AS id;
-      END
-    `;
-
-    const result = await pool.request().query(query);
-    if (result && result?.recordset) {
-      const recordset = result.recordset[0];
-      return calculateDiscount(recordset);
-    }
-    return null;
   } catch (error) {
     throw new Error('An internal server error occurred');
   }

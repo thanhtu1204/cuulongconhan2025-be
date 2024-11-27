@@ -1,12 +1,13 @@
 import _, { filter } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { sendTelegramNotification } from '@/libs/customNoti';
 import DatabaseDragonsAccount from '@/libs/dbNineDragonsAccount';
 import { getDataMbank } from '@/libs/getTransfer';
-import { connectAndExecute, getFirstPromotionConfig } from '@/libs/NineDragonsAccount';
+import { syncAndUpdateBalance } from '@/libs/mongo/controller/BonusUserController';
 import type { ITransactionMbbank } from '@/types/transaction';
 import type BaseResponse from '@/utils/BaseResponse';
-import { rateLimiterMiddleware } from '@/utils/utils';
+import { numberWithDot, rateLimiterMiddleware } from '@/utils/utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -17,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const isAllowed = rateLimiterMiddleware(clientIp ?? '') || false;
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
-  const verifiedToken = token === 'ABCXCCXAAAA@123@22123CLCNCHECK';
+  const verifiedToken = token === 'ABCXCCXAAAA@123@22123CLCNCHECK2025';
 
   if (!isAllowed) {
     return res
@@ -35,27 +36,55 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const logArr: any[] = [];
     const mergedArray: ITransactionMbbank[] = filter(
       dataTransfer,
-      (item) => !transactionListDb.some((some) => item.transactionID === some.transaction_bank_id)
+      (item) =>
+        !transactionListDb.some(
+          (some: any) => String(item.transactionID) === String(some.transaction_bank_id)
+        )
     );
     logArr.push({ 'list_new_add:': mergedArray?.length });
     if (!_.isEmpty(mergedArray)) {
-      let promotion: any;
-      await connectAndExecute(async (pool) => {
-        promotion = await getFirstPromotionConfig(pool);
-      });
+      const promotion = await DatabaseDragonsAccount.getFirstPromotionConfig();
       if (promotion) {
         const resulTransaction = await DatabaseDragonsAccount.addMultipleTransactionBank(
           mergedArray,
           promotion
         );
         logArr.push(...resulTransaction);
-
-        const result = await DatabaseDragonsAccount.addMultipleBalances(
-          userList,
-          mergedArray,
-          promotion
-        );
+        const result = await DatabaseDragonsAccount.addMultipleBalances(userList, mergedArray);
         logArr.push(...result.logArr);
+        // for (const record of mergedArray) {
+        //   const code = Number(record.description);
+        //   const user = userList.find((some: any) => code === some.user_id);
+        //   if (user) {
+        //     const originalAmount = Number(record.amount);
+        //     const minAmount = Number(promotion?.min_amount || 0);
+        //     const maxAmount = Number(promotion?.max_amount || 0);
+        //     const discountPercentage = Number(promotion?.discount_percentage || 0);
+        //
+        //     if (originalAmount >= minAmount && originalAmount <= maxAmount) {
+        //       const amountCalculated = originalAmount * (discountPercentage / 100);
+        //       const resultUpdateBonus = await syncAndUpdateBalance(user, amountCalculated);
+        //       logArr.push(resultUpdateBonus);
+        //     }
+        //   }
+        // }
+        mergedArray.map(async (record) => {
+          const code = Number(record.description);
+          const user = userList.find((some: any) => code === some.user_id);
+          if (user) {
+            const originalAmount = Number(record.amount);
+            const minAmount = Number(promotion?.min_amount || 0);
+            const maxAmount = Number(promotion?.max_amount || 0);
+            const discountPercentage = Number(promotion?.discount_percentage || 0);
+
+            if (originalAmount >= minAmount && originalAmount <= maxAmount) {
+              const amountCalculated = originalAmount * (discountPercentage / 100);
+              const resultUpdateBonus = await syncAndUpdateBalance(user, amountCalculated);
+              logArr.push(resultUpdateBonus);
+            }
+          }
+          return null;
+        });
       } else {
         const resulTransaction =
           await DatabaseDragonsAccount.addMultipleTransactionBank(mergedArray);
@@ -64,6 +93,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const result = await DatabaseDragonsAccount.addMultipleBalances(userList, mergedArray);
         logArr.push(...result.logArr);
       }
+
+      const message = `🎁 Có thông tin nạp mới cron-header 🎁
+ ${mergedArray
+   .map(
+     (item) => `
+-Mã giao dịch: ${item?.transactionID}
+-Số tiền: ${numberWithDot(Number(item?.amount) ?? 0)} VND
+-Nội dung: ${item?.description}
+-transactionDate: ${item?.transactionDate}
+-type: ${item?.type}`
+   )
+   .join('')}`;
+      await sendTelegramNotification(message);
     }
 
     const response: BaseResponse = {

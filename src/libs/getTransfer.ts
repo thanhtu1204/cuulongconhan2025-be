@@ -17,7 +17,7 @@ const url = `https://api.web2m.com/historyapimbv3/${Env.BANK_PASSWORD}/${Env.BAN
 export const getDataMbank = async () => {
   try {
     const response = await axiosInstance.get(url);
-    if (response && !_.isEmpty(response.data)) {
+    if (response && response?.status === 200 && response?.data?.status && response.data) {
       const listTrans: ITransactionMbbank[] = response.data.transactions;
       const listTransactionConvert: ITransactionMbbank[] = [];
       forEach(_.filter(listTrans, { type: 'IN' }), (data) => {

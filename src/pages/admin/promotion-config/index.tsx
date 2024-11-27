@@ -46,13 +46,16 @@ export default function ConfigPromotion() {
 
   const handleSubmit = async (values: FormData, formikHelpers: FormikHelpers<FormData>) => {
     const payload = {
-      ...values
+      ...values,
+      startDate: values?.startDate ? moment(values.startDate).valueOf() : null,
+      endDate: values?.endDate ? moment(values.endDate).valueOf() : null
     };
     const result: any = await dispatch(addConfigPromotionAction(payload)).unwrap();
 
     if (result?.status === 200) {
       toast.success('Cấu hình thành công!');
       formikHelpers.resetForm();
+      getData().then(() => {});
     }
     formikHelpers.setSubmitting(false);
   };
@@ -150,11 +153,7 @@ export default function ConfigPromotion() {
                     required
                     autoComplete="off"
                   />
-                  <ErrorMessage
-                    name="discountPercentage"
-                    component="div"
-                    className="text-xl text-red-500"
-                  />
+                  <ErrorMessage name="maxAmount" component="div" className="text-xl text-red-500" />
 
                   <Field
                     name="maxAmount"
@@ -175,7 +174,7 @@ export default function ConfigPromotion() {
                   </div>
                   <Field
                     className="h-14 w-full rounded text-xl"
-                    type="date"
+                    type="datetime-local" // Đổi thành datetime-local
                     id="startDate"
                     name="startDate"
                     placeholder="Chọn ngày và giờ hiệu lực của khuyến mãi"
@@ -195,7 +194,7 @@ export default function ConfigPromotion() {
                   </div>
                   <Field
                     className="h-14 w-full rounded text-xl"
-                    type="date"
+                    type="datetime-local" // Đổi thành datetime-local
                     id="endDate"
                     name="endDate"
                     placeholder="Chọn ngày và giờ hết hạn của khuyến mãi"
@@ -236,6 +235,15 @@ export default function ConfigPromotion() {
                   transition={{ duration: 0.9 }}
                   className="flex w-full items-center justify-center pt-12"
                 >
+                  {/* <button */}
+                  {/*  onPaste={() => {}} */}
+                  {/*  className="bg-red-400 rounded border border-blue-700  px-4 py-2 font-bold text-white mr-[20%]" */}
+                  {/*  disabled={loading} */}
+                  {/*  type="button" */}
+                  {/* > */}
+                  {/*  <span className="text-base font-bold">Tắt</span> */}
+                  {/* </button> */}
+
                   <button
                     className=" rounded border border-blue-700 bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
                     disabled={loading}
@@ -243,6 +251,7 @@ export default function ConfigPromotion() {
                   >
                     <span className="text-base font-bold">Cập nhật</span>
                   </button>
+
                   <div className="border-b-2 border-dashed border-blue-500 pt-4" />
                 </motion.div>
               </Form>
@@ -258,11 +267,17 @@ export default function ConfigPromotion() {
               </span>
               <br />
               <span className="flex w-full border-2 border-solid border-emerald-400 p-2">
-                Thời gian bắt đầu: {moment(listPromotion?.start_date ?? '').format('DD/MM/YYYY')}
+                Thời gian bắt đầu:{' '}
+                {moment(Number(listPromotion?.start_date)).isValid()
+                  ? moment(Number(listPromotion?.start_date)).format('DD/MM/YYYY HH:mm:ss')
+                  : 'Không xác định'}
               </span>
               <br />
               <span className="flex w-full border-2 border-solid border-emerald-400 p-2">
-                Thời gian kết thúc: {moment(listPromotion?.end_date ?? '').format('DD/MM/YYYY')}
+                Thời gian kết thúc:{' '}
+                {moment(Number(listPromotion?.end_date)).isValid()
+                  ? moment(Number(listPromotion?.end_date)).format('DD/MM/YYYY HH:mm:ss')
+                  : 'Không xác định'}
               </span>
               <br />
               <span className="flex w-full border-2 border-solid border-emerald-400 p-2">
