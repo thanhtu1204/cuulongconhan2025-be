@@ -1011,8 +1011,6 @@ class NineDragonsAccount {
       const result: any = await this.pool!.query(query);
       if (result && result?.recordset?.length > 0) {
         const recordset = result.recordset[0];
-        console.log('recordset', recordset);
-
         // Tính toán và trả về giá trị dựa trên bản ghi tìm được
         return calculateDiscount(recordset);
       }

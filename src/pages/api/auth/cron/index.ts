@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         //     }
         //   }
         // }
-        mergedArray.map(async (record) => {
+        const promises = mergedArray.map(async (record) => {
           const code = Number(record.description);
           const user = userList.find((some: any) => code === some.user_id);
           if (user) {
@@ -80,11 +80,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (originalAmount >= minAmount && originalAmount <= maxAmount) {
               const amountCalculated = originalAmount * (discountPercentage / 100);
               const resultUpdateBonus = await syncAndUpdateBalance(user, amountCalculated);
+
+              // Thêm vào logArr ngay sau khi xử lý xong.
               logArr.push(resultUpdateBonus);
+              return resultUpdateBonus; // Trả về kết quả để collect lại sau.
             }
           }
-          return null;
+          return null; // Trả về null nếu không tìm thấy user hoặc không thỏa điều kiện.
         });
+        await Promise.all(promises);
       } else {
         const resulTransaction =
           await DatabaseDragonsAccount.addMultipleTransactionBank(mergedArray);
