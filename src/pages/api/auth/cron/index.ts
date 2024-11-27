@@ -44,12 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     logArr.push({ 'list_new_add:': mergedArray?.length });
     if (!_.isEmpty(mergedArray)) {
       const promotion = await DatabaseDragonsAccount.getFirstPromotionConfig();
+      const resulTransaction = await DatabaseDragonsAccount.addMultipleTransactionBank(mergedArray);
+      logArr.push(...resulTransaction);
+
       if (promotion) {
-        const resulTransaction = await DatabaseDragonsAccount.addMultipleTransactionBank(
-          mergedArray,
-          promotion
-        );
-        logArr.push(...resulTransaction);
         const result = await DatabaseDragonsAccount.addMultipleBalances(userList, mergedArray);
         logArr.push(...result.logArr);
         // for (const record of mergedArray) {
@@ -90,10 +88,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         await Promise.all(promises);
       } else {
-        const resulTransaction =
-          await DatabaseDragonsAccount.addMultipleTransactionBank(mergedArray);
-        logArr.push(...resulTransaction);
-
         const result = await DatabaseDragonsAccount.addMultipleBalances(userList, mergedArray);
         logArr.push(...result.logArr);
       }
