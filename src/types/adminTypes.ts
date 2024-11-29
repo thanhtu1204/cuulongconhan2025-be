@@ -22,6 +22,7 @@ export interface IDashBoard {
   user_count: number;
   trans: ITrans;
   allTrans: IAllTrans[];
+  dataBonus: any[];
 }
 
 export interface IGiftList {

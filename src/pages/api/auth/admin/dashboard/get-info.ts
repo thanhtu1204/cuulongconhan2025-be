@@ -2,11 +2,12 @@ import { isEmpty } from 'lodash';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { verifyAuthAdmin } from '@/libs/auth';
+import { getAllBalanceHistories } from '@/libs/mongo/controller/BanlanceHistoryController';
 import {
   connectAndExecute,
   countAllMoney,
   countAllUser,
-  getAllTrans
+  getAllTransV1
 } from '@/libs/NineDragonsAccount';
 import type BaseResponse from '@/utils/BaseResponse';
 import { rateLimiterMiddleware } from '@/utils/utils';
@@ -38,10 +39,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     let item;
+    const dataBonus = await getAllBalanceHistories();
+
     await connectAndExecute(async (pool) => {
       const { user_count } = await countAllUser(pool);
       const trans: any = await countAllMoney(pool);
-      const allTrans = await getAllTrans(pool);
+      const allTrans = await getAllTransV1(pool);
       let totalMoney = 0;
       if (!isEmpty(trans)) {
         trans.forEach((i: any) => {
@@ -49,7 +52,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             Number(i?.total_amount || 0) / (1 + Number(i?.discount_percentage || 0) / 100);
         });
       }
-      item = { user_count, trans: { amount_total: totalMoney.toFixed(0) ?? 0 }, allTrans };
+      item = {
+        user_count,
+        trans: { amount_total: totalMoney.toFixed(0) ?? 0 },
+        allTrans,
+        dataBonus
+      };
     });
     if (item) {
       const response: BaseResponse = {

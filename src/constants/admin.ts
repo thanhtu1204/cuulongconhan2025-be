@@ -25,7 +25,8 @@ export const DEFAULT_ADMIN_STATE = {
       row_count: 0,
       amount_total: 0
     },
-    top10: []
+    top10: [],
+    dataBonus: []
   },
   listGift: [],
   listPromotion: {},

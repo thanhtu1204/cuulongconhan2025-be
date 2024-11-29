@@ -6,9 +6,9 @@ import { utils, writeFile } from 'xlsx';
 import { useAppSelector } from '@/stores';
 import { numberWithDot } from '@/utils/utils';
 
-const DashboardTable = () => {
-  const dashboard = useAppSelector((state) => state.admin.dashboard);
-  const itemsAllTrans = dashboard?.allTrans || [];
+const BonusTable = () => {
+  const dashboard: any = useAppSelector((state) => state.admin.dashboard);
+  const itemsAllTrans = dashboard?.dataBonus?.history || [];
 
   // Chỉ lấy 20 phần tử đầu tiên
   const first20Items = itemsAllTrans.slice(0, 10);
@@ -20,10 +20,7 @@ const DashboardTable = () => {
       (item: any) =>
         new Promise((resolve) => {
           const newItem = {
-            ...item,
-            real_amount: numberWithDot(
-              Number(item?.amount ?? 0) / (1 + Number(item?.discount_percentage || 0) / 100)
-            )
+            ...item
           };
           resolve(newItem);
         })
@@ -36,7 +33,7 @@ const DashboardTable = () => {
       const wb = utils.book_new();
       utils.book_append_sheet(wb, ws, 'Data');
       /* export to XLSX */
-      writeFile(wb, 'all-transaction-bank.xlsx');
+      writeFile(wb, 'all-bonus-transaction-bank.xlsx');
     });
   }, [itemsAllTrans]);
 
@@ -82,13 +79,7 @@ const DashboardTable = () => {
                 Thời gian
               </th>
               <th className="whitespace-nowrap border border-x-0 border-solid border-[#64748B] bg-[#475569] px-6 py-3 text-left align-middle text-xs font-semibold uppercase text-[#E2E8F0]">
-                Transaction description
-              </th>
-              <th className="whitespace-nowrap border border-x-0 border-solid border-[#64748B] bg-[#475569] px-6 py-3 text-left align-middle text-xs font-semibold uppercase text-[#E2E8F0]">
                 Số tiền
-              </th>
-              <th className="whitespace-nowrap border border-x-0 border-solid border-[#64748B] bg-[#475569] px-6 py-3 text-left align-middle text-xs font-semibold uppercase text-[#E2E8F0]">
-                Tỉ lệ KM
               </th>
               <th className="whitespace-nowrap border border-x-0 border-solid border-[#64748B] bg-[#475569] px-6 py-3 text-left align-middle text-xs font-semibold uppercase text-[#E2E8F0]">
                 Thực nhận
@@ -96,10 +87,10 @@ const DashboardTable = () => {
             </tr>
           </thead>
           <tbody className="rounded-xl bg-[#334155]">
-            {flatMap(first20Items, (item: any) => (
-              <tr key={item.transaction_id}>
+            {flatMap(first20Items, (item) => (
+              <tr key={item?._id}>
                 <th className=" items-center whitespace-nowrap border-x-0 border-t-0 p-4 px-6 text-left align-middle text-xs">
-                  <span className="text-center text-xs text-white">{item?.transaction_id}</span>
+                  <span className="text-center text-xs text-white">{item?._id}</span>
                 </th>
                 <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
                   {item?.user_id}
@@ -109,22 +100,15 @@ const DashboardTable = () => {
                 </td>
 
                 <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
-                  {item.transaction_bank_id}
+                  {item?.note}
                 </td>
                 <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
-                  {moment
-                    .unix(Number(item?.create_at_timestamp) / 1000)
+                  {moment(item?.created_at)
                     .utc()
                     .format('DD/MM/YYYY HH:mm:ss')}
                 </td>
                 <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
-                  {item?.transaction_description}
-                </td>
-                <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
                   {numberWithDot(item?.amount || 0)}
-                </td>
-                <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-white">
-                  {item?.discount_percentage}
                 </td>
                 <td className="whitespace-nowrap border-x-0 border-t-0 p-4 px-6 align-middle text-xs  text-blue-600">
                   {numberWithDot(
@@ -140,4 +124,4 @@ const DashboardTable = () => {
   );
 };
 
-export default memo(DashboardTable);
+export default memo(BonusTable);
