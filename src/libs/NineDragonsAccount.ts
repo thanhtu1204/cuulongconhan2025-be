@@ -364,6 +364,23 @@ export async function getAllTrans(pool: ConnectionPool) {
   }
 }
 
+export async function getAllTransV1(pool: ConnectionPool) {
+  try {
+    // const querry = 'SELECT TOP 10 * FROM dbo.[9d_transaction_bank] ORDER BY create_at DESC';
+    const query = `SELECT 
+    tb.*,
+    u.user_name,
+    (CAST(DATEDIFF(SECOND, '1970-01-01', tb.create_at) AS BIGINT) * 1000) AS create_at_timestamp
+FROM dbo.[9d_transaction_bank] tb
+LEFT JOIN dbo.[9d_users] u ON tb.user_id = u.user_id
+ORDER BY tb.create_at DESC;`;
+    const result = await pool.request().query(query);
+    return result.recordset || null;
+  } catch (error) {
+    throw new Error('An internal server error occurred');
+  }
+}
+
 export async function getAllListGiftCode(pool: ConnectionPool) {
   try {
     const querry = 'SELECT * FROM dbo.[Tbl_giftcode] ORDER BY create_at DESC;';

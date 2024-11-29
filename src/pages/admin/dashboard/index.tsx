@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import InfoCard from '@/components/Cards/InfoCard';
 import RoundIcon from '@/components/RoundIcon';
 import AdminLayout from '@/layouts/AdminLayout';
+import BonusTable from '@/pages/admin/component/bonus-dashboard';
 import DashboardTable from '@/pages/admin/component/dashbroad-table';
 import { useAppDispatch, useAppSelector } from '@/stores';
 import { dashBoardCronAction, getDashBoardAction } from '@/stores/admin';
@@ -121,6 +122,12 @@ function Dashboard() {
               10 giao dịch gần đây
             </h1>
             <DashboardTable />
+          </div>
+          <div>
+            <h1 className="my-6 text-center text-2xl font-semibold text-gray-700 dark:text-gray-200">
+              10 giao dịch long ngân gần đây
+            </h1>
+            <BonusTable />
           </div>
         </div>
       </motion.div>
