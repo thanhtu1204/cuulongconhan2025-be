@@ -348,6 +348,72 @@ class DatabaseCis {
     }
   }
 
+  public static async adminAddGift(item: any) {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+
+      const { user_id, cart_itemCode, game_server, item_price } = item;
+
+      const query = `
+      DECLARE @order_idx INT
+      DECLARE @v_error TINYINT
+      DECLARE @is_present TINYINT
+
+      SET XACT_ABORT ON
+      SET NOCOUNT ON
+      SET LOCK_TIMEOUT 2000
+
+      SET @v_error = 0
+      SET @is_present = 0
+
+      BEGIN TRAN
+
+      SELECT @order_idx = MAX(order_idx) FROM tbl_order_list WITH(NOLOCK)
+
+      IF @order_idx IS NULL
+        SET @order_idx = 1
+      ELSE
+        SET @order_idx = @order_idx + 1
+      INSERT dbo.tbl_cash_inven 
+      (item_code, item_user_id, item_server_code, item_present)
+      VALUES
+      (@cart_itemCode, @user_id, 0 ,@is_present)
+      INSERT INTO [dbo].[Tbl_Order_List]
+           ([order_idx]
+           ,[order_item_code]
+           ,[order_user_id]
+           ,[order_game_server]
+           ,[order_item_price]
+           ,[order_input_date]
+           ,[order_status]
+           ,[order_game_input_date]
+           ,[order_present]
+           ,[present_receive_id])
+          VALUES
+           (@order_idx,@cart_itemCode,@user_id,0,0,GETDATE(),1,GETDATE(),0,0)
+
+      SET @v_error = 1
+
+      COMMIT TRAN`;
+
+      const result = await this.pool!.request()
+        .input('user_id', TYPES.VarChar, user_id)
+        .input('cart_itemCode', TYPES.Int, cart_itemCode)
+        .input('game_server', TYPES.TinyInt, game_server)
+        .input('item_price', TYPES.Int, item_price)
+        .query(query);
+
+      if (result && result.recordset) {
+        return result.recordset;
+      }
+      return null;
+    } catch (error) {
+      throw new Error('An internal server error occurred');
+    }
+  }
+
   public static async countBalanceUsedByUserName(
     userName: string,
     startTime: string,

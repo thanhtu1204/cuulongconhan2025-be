@@ -496,3 +496,14 @@ export const getListItemBonusAll = async () => {
     }
   });
 };
+
+export const addCodeToUserName = async (payload: any) => {
+  const state = store.getState();
+  const { accessToken } = state.admin;
+  return http.post<IAllPromotions>(API_URL.ADD_CODE_TO_USER_NAME, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+};
