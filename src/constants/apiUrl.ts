@@ -49,7 +49,8 @@ export const API_URL = {
   ADD_BONUS_MONEY_BY_USER_NAME: '/api/auth/admin/add-bonus-money',
   ADMIN_ADD_ITEM_BONUS: '/api/auth/admin/shop-bonus/add-item',
   LIST_ITEM_BONUS_FULL: '/api/auth/admin/shop-bonus/list-item-bonus-full',
-  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item'
+  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item',
+  ADD_CODE_TO_USER_NAME: '/api/auth/admin/add-item-to-user'
 };
 export const API_GLOBAL_LOADING_URL = {
   NEWS: '/api/news',
@@ -76,5 +77,6 @@ export const API_GLOBAL_LOADING_URL = {
   ADD_BONUS_MONEY_BY_USER_NAME: '/api/auth/admin/add-bonus-money',
   ADMIN_ADD_ITEM_BONUS: '/api/auth/admin/shop-bonus/add-item',
   LIST_ITEM_BONUS_FULL: '/api/auth/admin/shop-bonus/list-item-bonus-full',
-  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item'
+  DELETE_ITEM_BONUS: '/api/auth/admin/shop-bonus/delete-item',
+  ADD_CODE_TO_USER_NAME: '/api/auth/admin/add-item-to-user'
 };

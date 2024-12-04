@@ -5,6 +5,7 @@ import { ADMIN_STORE, DEFAULT_ADMIN_STATE } from '@/constants/admin';
 import {
   activeGift,
   addBonusMoneyByUserName,
+  addCodeToUserName,
   addConfigLinkGame,
   addConfigPromotion,
   addMoneyByUserName,
@@ -400,6 +401,13 @@ export const dashBoardCronAction = createAsyncThunk(`${ADMIN_STORE}/cron-dashboa
   const newRes = await cronInDashBoard();
   return newRes;
 });
+
+export const addCodeAction = createAsyncThunk(
+  `${ADMIN_STORE}/add-code-action`,
+  async (payload: any) => {
+    return addCodeToUserName(payload);
+  }
+);
 
 const adminActions = adminStore.actions;
 const adminReducer = adminStore.reducer;

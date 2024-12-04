@@ -1019,6 +1019,40 @@ class NineDragonsAccount {
       throw new Error('An internal server error occurred');
     }
   }
+
+  public static async addGiftByAdmin(item: any): Promise<any> {
+    try {
+      if (!this.pool || !this.pool.connected) {
+        await this.connect();
+      }
+      const { itemCode, active_id, active_user } = item;
+      const nowDate = new Date();
+
+      const query = `
+      INSERT INTO dbo.[Tbl_giftcode] ( gift_code, item_code, delete_flag, create_at, expried_date,active_id,active_user,update_at)
+      VALUES ( @gift_code, @item_code, @delete_flag, @create_at, @expried_date,@active_id,@active_user,@update_at)
+    `;
+
+      const result: any = await this.pool!.request()
+        .input('gift_code', TYPES.NVarChar, 'add-by-admin')
+        .input('item_code', TYPES.NVarChar, itemCode)
+        .input('create_at', TYPES.DateTime, nowDate)
+        .input('expried_date', TYPES.DateTime, nowDate)
+        .input('active_id', TYPES.VarChar, String(active_id))
+        .input('active_user', TYPES.VarChar, String(active_user))
+        .input('update_at', TYPES.DateTime, nowDate)
+        .input('delete_flag', TYPES.Bit, 1)
+        .query(query);
+
+      if (result.rowsAffected[0] !== 1) {
+        return null;
+      }
+      return { data: 'create successful', status: 200 };
+    } catch (error) {
+      console.log('error', error);
+      throw new Error('An internal server error occurred');
+    }
+  }
 }
 
 export default NineDragonsAccount;

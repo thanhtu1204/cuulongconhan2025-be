@@ -456,6 +456,27 @@ export default function AdminSidebar() {
               </li>
 
               <li className="items-center">
+                <Link href="/admin/add-code-by-admin">
+                  <span
+                    className={`block py-3 text-xs font-bold uppercase ${
+                      router.pathname.indexOf('/admin/add-code-by-admin') !== -1
+                        ? 'text-cyan-400 hover:text-red-700'
+                        : 'text-white hover:text-cyan-400'
+                    }`}
+                  >
+                    <i
+                      className={` text-sm ${
+                        router.pathname.indexOf('/admin/add-code-by-admin') !== -1
+                          ? 'text-cyan-400 hover:text-red-700'
+                          : 'text-white hover:text-cyan-400'
+                      }`}
+                    />
+                    SEND GIFT TO USER
+                  </span>
+                </Link>
+              </li>
+
+              <li className="items-center">
                 <Link href="/admin/report-add-balance">
                   <span
                     className={`block py-3 text-xs font-bold uppercase ${
@@ -495,6 +516,7 @@ export default function AdminSidebar() {
                   </span>
                 </Link>
               </li>
+
               <li className="items-center">
                 <Link href="/admin/manager-event">
                   <span
